@@ -4,6 +4,8 @@
 
 import RPi.GPIO as GPIO
 import time
+import random
+from datetime import datetime
 import os
 
 '''
@@ -13,16 +15,16 @@ poll time -> amount of time in secons that we check the temp at
 outputPin -> the pin we hooked the fan up to
 '''
 dangerTemp = 80.0
-pollTime = 60 
+pollTime = 5 
 outputPin = 18
 HOME = os.path.expanduser('~')
-logFileLocation = HOME + "/Logs/tempLog" + ".csv"
+logFileLocation = HOME + "/Logs/piTempLog" + ".csv"
 
 '''
 Setup the output
 '''
 def Setup():
-	GPIO.setMode(GPIO.BCM)
+	GPIO.setmode(GPIO.BCM)
 	GPIO.setup(outputPin,GPIO.OUT)
 	return
 
@@ -30,15 +32,21 @@ def Setup():
 Reads the temperature of the raspi
 '''
 def ReadTemperature():
-	temp = os.popen("vcgencmd measure_temp").readLine()
-	return (float) (temp.replace("temp=","")
+	temp = os.popen("vcgencmd measure_temp").readline()
+	temp = temp.replace("'C","")
+	temp = temp.replace("temp=","")
+	#print("Read Temp is" + temp);
+	return (float) (temp)
 
 '''
-writes to the logfile
+	writes to the logfile
 '''
 def WriteToLog(info):
+	logEntry = str(datetime.now()) + "," + str(info) + "\n"
+	#print(logEntry)
 	with open(logFileLocation,"a",encoding = 'utf-8') as log:
-		log.write(str(datetime.now() + "," + info + "," + "\n"))
+		log.write(logEntry)
+	return
 
 
 '''
@@ -60,16 +68,27 @@ def ActivateFan():
 
 try:
 	Setup()
+	wasActive = False
 	while ...:
-		curTemp = ReadTemperature()
+		#curTemp = ReadTemperature()
+		curTemp = random.uniform(50,100)
 		isProblem = curTemp > dangerTemp
 		if(isProblem):
 			ActivateFan()
-		else:
+			logMessage = "ACTIVATED FAN"
+			wasActive = True
+		elif(wasActive and  not isProblem):
 			DeactivateFan()
+			logMessage = "DEACTIVATED FAN"
+			wasActive = False
+		else:
+			logMessage = "NO ACTION"
+		WriteToLog(logMessage + "," + str(curTemp));
 		time.sleep(pollTime);
-except e:
+except Exception as e:
 	WriteToLog(e)
+finally:
+	GPIO.cleanup()
 
 
 		
