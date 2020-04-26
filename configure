@@ -43,14 +43,28 @@ sed -i "s|<LOGLOCATION>|\"$LOGPATH\"|g" $TEMPLATE
 #echo "RESULT IS"
 #head -n 21 $TEMPLATE
 
-## TODO
-#1. Configure the Script
-#a. poll time
-#b. danger temp
-#c. outPin
 
-#2. Configure the Service
-#a. Add Path to pyScript in service
-#b. If Service Exists, don't do it.
-#c. But if it doesn't, link it
+SERVICELOC=/etc/systemd/system
+
+#Check For Service
+if [ -f $SERVICELOC/FanService.service ]; then
+	echo "Service \"FanService.service\" already exists at $SERVICELOC" 
+	echo "Remove it to reconfigure."
+else
+	#GetDir
+	SERVICEPATH="`pwd`/Service"
+	#Move the Template Service
+	cp $SERVICEPATH/.template.service $SERVICEPATH/FanService.service
+	SERVICE=$SERVICEPATH/FanService.service
+	sed -i "s|<PYPATH>|$TEMPLATE|g" $SERVICE
+	echo "Creatd Service at: $SERVICE pointing at script: $TEMPLATE"
+
+	echo "Create Service Symlink"
+	sudo ln -s $SERVICE /etc/systemd/system
+	echo "Created service Symlink for $SERVICE attempting start..."
+fi
+
+sudo systemctl start FanService.service
+exit $?
+
 

@@ -20,8 +20,8 @@ pollTime = <POLLTIME>
 outputPin = <OUTPUTPIN>
 logFileLocation = <LOGLOCATION>
 
-HOME = os.path.expanduser('~')
-logFileLocation = HOME + "/Logs/piTempLog" + ".csv"
+#HOME = os.path.expanduser('~')
+#logFileLocation = HOME + "/Logs/piTempLog" + ".csv"
 
 
 '''
@@ -74,8 +74,8 @@ try:
 	Setup()
 	wasActive = False
 	while ...:
-		#curTemp = ReadTemperature()
-		curTemp = random.uniform(50,100)
+		curTemp = ReadTemperature()
+		#curTemp = random.uniform(50,100)
 		isProblem = curTemp > dangerTemp
 		logMessage = ""
 		if(not wasActive and isProblem):

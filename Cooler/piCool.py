@@ -15,13 +15,13 @@ poll time -> amount of time in secons that we check the temp at
 outputPin -> the pin we hooked the fan up to
 logFileLocation -> where the logs go
 '''
-dangerTemp = 4
-pollTime = 5
-outputPin = 9
+dangerTemp = 70
+pollTime = 2
+outputPin = 18
 logFileLocation = "/home/pi/Projects/PiCool/Logs/piTempLog.csv"
 
-HOME = os.path.expanduser('~')
-logFileLocation = HOME + "/Logs/piTempLog" + ".csv"
+#HOME = os.path.expanduser('~')
+#logFileLocation = HOME + "/Logs/piTempLog" + ".csv"
 
 
 '''
@@ -74,8 +74,8 @@ try:
 	Setup()
 	wasActive = False
 	while ...:
-		#curTemp = ReadTemperature()
-		curTemp = random.uniform(50,100)
+		curTemp = ReadTemperature()
+		#curTemp = random.uniform(50,100)
 		isProblem = curTemp > dangerTemp
 		logMessage = ""
 		if(not wasActive and isProblem):
