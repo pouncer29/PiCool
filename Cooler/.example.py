@@ -13,16 +13,12 @@ Configurable values
 dangerTemp -> the temp we activate the fan at.
 poll time -> amount of time in secons that we check the temp at
 outputPin -> the pin we hooked the fan up to
-logFileLocation -> where the logs go
 '''
-dangerTemp = 5
-pollTime = 8
-outputPin = 9
-logFileLocation = "/home/pi/Projects/PiCool/Logs/piTempLog.csv"
-
+dangerTemp = 80.0
+pollTime = 5 
+outputPin = 18
 HOME = os.path.expanduser('~')
 logFileLocation = HOME + "/Logs/piTempLog" + ".csv"
-
 
 '''
 Setup the output

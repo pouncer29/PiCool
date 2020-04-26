@@ -24,18 +24,25 @@ if [ $? -ne 0 ]; then
 	exit 1
 fi
 
+#Move Template txt to pyCool
+TEMPLATEPATH="`pwd`/Cooler"
+cp $TEMPLATEPATH/.template.py $TEMPLATEPATH/piCool.py
+
+TEMPLATE=$TEMPLATEPATH/piCool.py
+
 LOGPATH="`pwd`/Logs/piTempLog.csv"
-TEMPLATE="`pwd`/Cooler/unconfigured.txt"
-echo "LOGPATH: $LOGPATH"
-echo "TEMPLATE: $TEMPLATE"
+echo "Logging to: $LOGPATH"
+echo "Service script is: $TEMPLATEPATH/piCool.py"
 
 #Preform Replacement
 sed -i "s/<DANGERTEMP>/$1/g" $TEMPLATE
 sed -i "s/<POLLTIME>/$2/g" $TEMPLATE
 sed -i "s/<OUTPUTPIN>/$3/g" $TEMPLATE
 sed -i "s|<LOGLOCATION>|\"$LOGPATH\"|g" $TEMPLATE
-echo "RESULT IS"
-head -n 21 $TEMPLATE
+
+#echo "RESULT IS"
+#head -n 21 $TEMPLATE
+
 ## TODO
 #1. Configure the Script
 #a. poll time
