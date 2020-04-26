@@ -61,10 +61,11 @@ else
 
 	echo "Create Service Symlink"
 	sudo ln -s $SERVICE /etc/systemd/system
+	sudo systemctl enable FanService.service
 	echo "Created service Symlink for $SERVICE attempting start..."
 fi
 
-sudo systemctl start FanService.service
+sudo systemctl restart FanService.service
 exit $?
 
 

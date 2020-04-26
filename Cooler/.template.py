@@ -30,6 +30,7 @@ Setup the output
 def Setup():
 	GPIO.setmode(GPIO.BCM)
 	GPIO.setup(outputPin,GPIO.OUT)
+	WriteToLog("Setup Fan Control on Pin: " + str(outputPin))
 	return
 
 '''
@@ -71,6 +72,7 @@ def ActivateFan():
 	return
 
 try:
+	WriteToLog("Beginning Script, initial temp is: " + str(ReadTemperature()))
 	Setup()
 	wasActive = False
 	while ...:

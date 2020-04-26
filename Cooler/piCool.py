@@ -15,8 +15,8 @@ poll time -> amount of time in secons that we check the temp at
 outputPin -> the pin we hooked the fan up to
 logFileLocation -> where the logs go
 '''
-dangerTemp = 70
-pollTime = 2
+dangerTemp = 52
+pollTime = 10
 outputPin = 18
 logFileLocation = "/home/pi/Projects/PiCool/Logs/piTempLog.csv"
 
@@ -30,6 +30,7 @@ Setup the output
 def Setup():
 	GPIO.setmode(GPIO.BCM)
 	GPIO.setup(outputPin,GPIO.OUT)
+	WriteToLog("Setup Fan Control on Pin: " + str(outputPin))
 	return
 
 '''
@@ -71,6 +72,7 @@ def ActivateFan():
 	return
 
 try:
+	WriteToLog("Beginning Script, initial temp is: " + str(ReadTemperature()))
 	Setup()
 	wasActive = False
 	while ...:
