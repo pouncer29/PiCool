@@ -15,8 +15,8 @@ poll time -> amount of time in secons that we check the temp at
 outputPin -> the pin we hooked the fan up to
 logFileLocation -> where the logs go
 '''
-dangerTemp = 52
-pollTime = 10
+dangerTemp = 70
+pollTime = 60
 outputPin = 18
 logFileLocation = "/home/pi/Projects/PiCool/Logs/piTempLog.csv"
 
@@ -72,7 +72,12 @@ def ActivateFan():
 	return
 
 try:
-	WriteToLog("Beginning Script, initial temp is: " + str(ReadTemperature()))
+	WriteToLog("Beginning Script: " +
+	"Initial temp is: " + str(ReadTemperature()) + "C. " +
+	"OutputPin is: "+ str(outputPin) +
+	" Polling Time: "+ str(pollTime) + "s. " +
+	"Danger Temp: " + str(dangerTemp) + "C. ")
+	
 	Setup()
 	wasActive = False
 	while ...:
@@ -80,9 +85,12 @@ try:
 		#curTemp = random.uniform(50,100)
 		isProblem = curTemp > dangerTemp
 		logMessage = ""
-		if(not wasActive and isProblem):
+		if(isProblem):
 			ActivateFan()
 			logMessage = "ACTIVATED FAN"
+			if(wasActive):
+				logMessage = "MAINTAINTED FAN"
+
 			wasActive = True
 		elif(wasActive and  not isProblem):
 			DeactivateFan()
@@ -100,6 +108,7 @@ finally:
 
 
 		
+GPIO.cleanup()
 	
 	
 
