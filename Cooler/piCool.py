@@ -73,7 +73,8 @@ try:
 		#curTemp = ReadTemperature()
 		curTemp = random.uniform(50,100)
 		isProblem = curTemp > dangerTemp
-		if(isProblem):
+		logMessage = ""
+		if(not wasActive and isProblem):
 			ActivateFan()
 			logMessage = "ACTIVATED FAN"
 			wasActive = True
@@ -81,9 +82,10 @@ try:
 			DeactivateFan()
 			logMessage = "DEACTIVATED FAN"
 			wasActive = False
-		else:
-			logMessage = "NO ACTION"
-		WriteToLog(logMessage + "," + str(curTemp));
+
+		if(logMessage != ""):
+			WriteToLog(logMessage + "," + str(curTemp));
+
 		time.sleep(pollTime);
 except Exception as e:
 	WriteToLog(e)
