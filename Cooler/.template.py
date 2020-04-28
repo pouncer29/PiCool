@@ -80,6 +80,8 @@ try:
 	
 	Setup()
 	wasActive = False
+	counter = 0;
+
 	while ...:
 		curTemp = ReadTemperature()
 		#curTemp = random.uniform(50,100)
@@ -90,16 +92,20 @@ try:
 			logMessage = "ACTIVATED FAN"
 			if(wasActive):
 				logMessage = "MAINTAINTED FAN"
-
 			wasActive = True
 		elif(wasActive and  not isProblem):
 			DeactivateFan()
 			logMessage = "DEACTIVATED FAN"
 			wasActive = False
+		
+		# If it's been awhile, we should show what's going on.
+		if(not wasActive and not isProblem and counter > 10):
+			logMessage = "MAINTAINED INACTIVE"	
 
 		if(logMessage != ""):
 			WriteToLog(logMessage + "," + str(curTemp));
 
+		counter += 1
 		time.sleep(pollTime);
 except Exception as e:
 	WriteToLog(e)
