@@ -15,8 +15,8 @@ poll time -> amount of time in secons that we check the temp at
 outputPin -> the pin we hooked the fan up to
 logFileLocation -> where the logs go
 '''
-dangerTemp = 65
-pollTime = 60
+dangerTemp = 40
+pollTime = 15
 outputPin = 18
 logFileLocation = "/home/pi/Projects/PiCool/Logs/piTempLog.csv"
 
@@ -46,10 +46,16 @@ def ReadTemperature():
 '''
 	writes to the logfile
 '''
-def WriteToLog(info):
+def WriteToLog(info,firstEntry=False):
 	logEntry = str(datetime.now()) + "," + str(info) + "\n"
+	mode = "a"
 	#print(logEntry)
-	with open(logFileLocation,"a",encoding = 'utf-8') as log:
+	if(firstEntry):
+		mode = "w"
+	else:
+		mode = "a"
+
+	with open(logFileLocation,mode,encoding = 'utf-8') as log:
 		log.write(logEntry)
 	return
 
@@ -76,7 +82,7 @@ try:
 	"Initial temp is: " + str(ReadTemperature()) + "C. " +
 	"OutputPin is: "+ str(outputPin) +
 	" Polling Time: "+ str(pollTime) + "s. " +
-	"Danger Temp: " + str(dangerTemp) + "C. ")
+	"Danger Temp: " + str(dangerTemp) + "C. ",True)
 	
 	Setup()
 	wasActive = False
