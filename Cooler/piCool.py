@@ -15,8 +15,8 @@ poll time -> amount of time in secons that we check the temp at
 outputPin -> the pin we hooked the fan up to
 logFileLocation -> where the logs go
 '''
-dangerTemp = 40
-pollTime = 15
+dangerTemp = 60
+pollTime = 60
 outputPin = 18
 logFileLocation = "/home/pi/Projects/PiCool/Logs/piTempLog.csv"
 
@@ -85,6 +85,7 @@ try:
 	"Danger Temp: " + str(dangerTemp) + "C. ",True)
 	
 	Setup()
+	DeactivateFan()
 	wasActive = False
 	counter = 0;
 

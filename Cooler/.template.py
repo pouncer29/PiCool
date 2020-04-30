@@ -85,6 +85,7 @@ try:
 	"Danger Temp: " + str(dangerTemp) + "C. ",True)
 	
 	Setup()
+	DeactivateFan()
 	wasActive = False
 	counter = 0;
 
