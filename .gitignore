@@ -130,3 +130,6 @@ dmypy.json
 
 #Logs
 Logs/*
+
+#generated files
+Cooler/piCool.py
