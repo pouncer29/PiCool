@@ -1,0 +1,71 @@
+#! /bin/bash
+
+function usage () {
+	echo "usage"
+	echo "config <dangerTemp> <pollTime> <ouputPin>"
+	echo "dangerTemp - The temperature at which if crossed, fan is activated"
+	echo "pollTime - the time in seconds to check the pi's temperature"
+	echo "outputPin - The pin that is hooked up to the power for the fan"
+}
+
+
+#Lets Go
+echo "BEGIN PICOOL CONFIG"
+
+if [ $# -ne 3 ]; then
+	usage
+	exit 1
+fi
+
+#Check Params are what we expect
+egrep -q "^[0-9]*$" <<< $1$2$3
+if [ $? -ne 0 ]; then
+	usage
+	exit 1
+fi
+
+#Move Template txt to pyCool
+TEMPLATEPATH="`pwd`/Cooler"
+cp $TEMPLATEPATH/.template.py $TEMPLATEPATH/piCool.py
+
+TEMPLATE=$TEMPLATEPATH/piCool.py
+
+LOGPATH="`pwd`/Logs/piTempLog.csv"
+echo "Logging to: $LOGPATH"
+echo "Service script is: $TEMPLATEPATH/piCool.py"
+
+#Preform Replacement
+sed -i "s/<DANGERTEMP>/$1/g" $TEMPLATE
+sed -i "s/<POLLTIME>/$2/g" $TEMPLATE
+sed -i "s/<OUTPUTPIN>/$3/g" $TEMPLATE
+sed -i "s|<LOGLOCATION>|\"$LOGPATH\"|g" $TEMPLATE
+
+#echo "RESULT IS"
+#head -n 21 $TEMPLATE
+
+
+SERVICELOC=/etc/systemd/system
+
+#Check For Service
+if [ -f $SERVICELOC/FanService.service ]; then
+	echo "Service \"FanService.service\" already exists at $SERVICELOC" 
+	echo "Remove it to reconfigure."
+else
+	#GetDir
+	SERVICEPATH="`pwd`/Service"
+	#Move the Template Service
+	cp $SERVICEPATH/.template.service $SERVICEPATH/FanService.service
+	SERVICE=$SERVICEPATH/FanService.service
+	sed -i "s|<PYPATH>|$TEMPLATE|g" $SERVICE
+	echo "Creatd Service at: $SERVICE pointing at script: $TEMPLATE"
+
+	echo "Create Service Symlink"
+	sudo ln -s $SERVICE /etc/systemd/system
+	sudo systemctl enable FanService.service
+	echo "Created service Symlink for $SERVICE attempting start..."
+fi
+
+sudo systemctl restart FanService.service
+exit $?
+
+
