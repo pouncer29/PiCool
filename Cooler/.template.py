@@ -94,6 +94,11 @@ try:
 		#curTemp = random.uniform(50,100)
 		isProblem = curTemp > dangerTemp
 		logMessage = ""
+
+		# If it's been awhile, we should show what's going on.
+		if(not wasActive and not isProblem and counter > 10):
+			logMessage = "MAINTAINED INACTIVE"	
+
 		if(isProblem):
 			ActivateFan()
 			logMessage = "ACTIVATED FAN"
@@ -104,10 +109,6 @@ try:
 			DeactivateFan()
 			logMessage = "DEACTIVATED FAN"
 			wasActive = False
-		
-		# If it's been awhile, we should show what's going on.
-		if(not wasActive and not isProblem and counter > 10):
-			logMessage = "MAINTAINED INACTIVE"	
 
 		if(logMessage != ""):
 			WriteToLog(logMessage + "," + str(curTemp));
