@@ -8,7 +8,6 @@ function usage () {
 	echo "outputPin - The pin that is hooked up to the power for the fan"
 }
 
-
 #Lets Go
 echo "BEGIN PICOOL CONFIG"
 
@@ -30,19 +29,10 @@ cp $TEMPLATEPATH/.template.py $TEMPLATEPATH/piCool.py
 
 TEMPLATE=$TEMPLATEPATH/piCool.py
 
-LOGPATH="`pwd`/Logs/piTempLog.csv"
-echo "Logging to: $LOGPATH"
-echo "Service script is: $TEMPLATEPATH/piCool.py"
-
 #Preform Replacement
 sed -i "s/<DANGERTEMP>/$1/g" $TEMPLATE
 sed -i "s/<POLLTIME>/$2/g" $TEMPLATE
 sed -i "s/<OUTPUTPIN>/$3/g" $TEMPLATE
-sed -i "s|<LOGLOCATION>|\"$LOGPATH\"|g" $TEMPLATE
-
-#echo "RESULT IS"
-#head -n 21 $TEMPLATE
-
 
 SERVICELOC=/etc/systemd/system
 
@@ -53,6 +43,7 @@ if [ -f $SERVICELOC/FanService.service ]; then
 else
 	#GetDir
 	SERVICEPATH="`pwd`/Service"
+
 	#Move the Template Service
 	cp $SERVICEPATH/.template.service $SERVICEPATH/FanService.service
 	SERVICE=$SERVICEPATH/FanService.service

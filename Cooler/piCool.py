@@ -3,9 +3,11 @@
 #	    Synopsis: python - beans on toast... weird
 
 import RPi.GPIO as GPIO
+from datetime import datetime
+from systemd import journal
 import time
 import random
-from datetime import datetime
+import sys
 import os
 
 '''
@@ -15,14 +17,9 @@ poll time -> amount of time in secons that we check the temp at
 outputPin -> the pin we hooked the fan up to
 logFileLocation -> where the logs go
 '''
-dangerTemp = 60
-pollTime = 60
+dangerTemp = 45
+pollTime = 15
 outputPin = 18
-logFileLocation = "/home/pi/Projects/PiCool/Logs/piTempLog.csv"
-
-#HOME = os.path.expanduser('~')
-#logFileLocation = HOME + "/Logs/piTempLog" + ".csv"
-
 
 '''
 Setup the output
@@ -44,21 +41,13 @@ def ReadTemperature():
 	return (float) (temp)
 
 '''
-	writes to the logfile
+	Writes to the service log
 '''
 def WriteToLog(info,firstEntry=False):
 	logEntry = str(datetime.now()) + "," + str(info) + "\n"
-	mode = "a"
+	journal.write(logEntry)
 	#print(logEntry)
-	if(firstEntry):
-		mode = "w"
-	else:
-		mode = "a"
-
-	with open(logFileLocation,mode,encoding = 'utf-8') as log:
-		log.write(logEntry)
 	return
-
 
 '''
 Deactivates the Fan
@@ -91,7 +80,6 @@ try:
 
 	while ...:
 		curTemp = ReadTemperature()
-		#curTemp = random.uniform(50,100)
 		isProblem = curTemp > dangerTemp
 		logMessage = ""
 
@@ -105,11 +93,11 @@ try:
 			if(wasActive):
 				logMessage = "MAINTAINTED FAN"
 			wasActive = True
-		elif(wasActive and not isProblem):
+		elif(wasActive and  not isProblem):
 			DeactivateFan()
 			logMessage = "DEACTIVATED FAN"
 			wasActive = False
-		
+
 		if(logMessage != ""):
 			WriteToLog(logMessage + "," + str(curTemp));
 
