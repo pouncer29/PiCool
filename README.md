@@ -40,5 +40,5 @@ The Execution and activation of the Logs is logged with the Service. The configu
 [This is the cooling aparatus I got](https://www.amazon.ca/gp/product/B07MW3GM1T/ref=ppx_yo_dt_b_asin_title_o02_s00?ie=UTF8&psc=1) but the script will work for anything that depends on temperature and is hooked up to the configured pin.
 
 ### Speaking Of Pins...
-Here is the [pinout for Raspi's](https://maker.pro/raspberry-pi/tutorial/raspberry-pi-4-gpio-pinout) (3 and 4 I think)
+Here are the [pinouts for Raspi's](https://maker.pro/raspberry-pi/tutorial/raspberry-pi-4-gpio-pinout) (3 and 4 I think)
 
