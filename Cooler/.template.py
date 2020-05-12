@@ -5,6 +5,7 @@
 import RPi.GPIO as GPIO
 import time
 import random
+import sys
 from datetime import datetime
 import os
 
@@ -48,6 +49,7 @@ def ReadTemperature():
 '''
 def WriteToLog(info,firstEntry=False):
 	logEntry = str(datetime.now()) + "," + str(info) + "\n"
+	print(logEntry,file=sys.stderr)
 	mode = "a"
 	#print(logEntry)
 	if(firstEntry):
