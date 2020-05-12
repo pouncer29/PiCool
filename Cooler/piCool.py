@@ -3,7 +3,6 @@
 #	    Synopsis: python - beans on toast... weird
 
 import RPi.GPIO as GPIO
-from datetime import datetime
 from systemd import journal
 import time
 import random
@@ -18,7 +17,7 @@ outputPin -> the pin we hooked the fan up to
 logFileLocation -> where the logs go
 '''
 dangerTemp = 45
-pollTime = 15
+pollTime = 60
 outputPin = 18
 
 '''
@@ -44,7 +43,7 @@ def ReadTemperature():
 	Writes to the service log
 '''
 def WriteToLog(info,firstEntry=False):
-	logEntry = str(datetime.now()) + "," + str(info) + "\n"
+	logEntry = str(info) + "\n"
 	journal.write(logEntry)
 	#print(logEntry)
 	return

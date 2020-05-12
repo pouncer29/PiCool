@@ -57,6 +57,19 @@ else
 fi
 
 sudo systemctl restart FanService.service
-exit $?
+if [ $? -ne 0 ];then
+	echo "Failed to restart service FanService.service"
+	exit 1
+fi
+
+
+read -p "Create \"temp\" alias to list temp at: ~/.bashrc? [Y/n]" -n 1 -r
+echo
+echo
+if [[ $REPLY =~ ^[Yy]$ ]]
+then
+	echo "alias temp=\"sudo systemctl status FanService.service | tail -n 1\"" >> ~/.bashrc
+fi
+exit 0
 
 
