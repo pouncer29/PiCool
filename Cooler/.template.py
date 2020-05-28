@@ -3,26 +3,22 @@
 #	    Synopsis: python - beans on toast... weird
 
 import RPi.GPIO as GPIO
+from systemd import journal
 import time
 import random
-from datetime import datetime
+import sys
 import os
 
 '''
 Configurable values
 dangerTemp -> the temp we activate the fan at.
 poll time -> amount of time in secons that we check the temp at
-outputPin -> the pin we hooked the fan up to
+outputPin -> the GPIO pin we hooked the fan up to
 logFileLocation -> where the logs go
 '''
 dangerTemp = <DANGERTEMP>
 pollTime = <POLLTIME>
 outputPin = <OUTPUTPIN>
-logFileLocation = <LOGLOCATION>
-
-#HOME = os.path.expanduser('~')
-#logFileLocation = HOME + "/Logs/piTempLog" + ".csv"
-
 
 '''
 Setup the output
@@ -44,21 +40,13 @@ def ReadTemperature():
 	return (float) (temp)
 
 '''
-	writes to the logfile
+	Writes to the service log
 '''
 def WriteToLog(info,firstEntry=False):
-	logEntry = str(datetime.now()) + "," + str(info) + "\n"
-	mode = "a"
+	logEntry = str(info) + "\n"
+	journal.write(logEntry)
 	#print(logEntry)
-	if(firstEntry):
-		mode = "w"
-	else:
-		mode = "a"
-
-	with open(logFileLocation,mode,encoding = 'utf-8') as log:
-		log.write(logEntry)
 	return
-
 
 '''
 Deactivates the Fan
@@ -85,14 +73,19 @@ try:
 	"Danger Temp: " + str(dangerTemp) + "C. ",True)
 	
 	Setup()
+	DeactivateFan()
 	wasActive = False
 	counter = 0;
 
 	while ...:
 		curTemp = ReadTemperature()
-		#curTemp = random.uniform(50,100)
 		isProblem = curTemp > dangerTemp
 		logMessage = ""
+
+		# If it's been awhile, we should show what's going on.
+		if(not wasActive and not isProblem and counter > 10):
+			logMessage = "MAINTAINED INACTIVE"	
+
 		if(isProblem):
 			ActivateFan()
 			logMessage = "ACTIVATED FAN"
@@ -103,10 +96,6 @@ try:
 			DeactivateFan()
 			logMessage = "DEACTIVATED FAN"
 			wasActive = False
-		
-		# If it's been awhile, we should show what's going on.
-		if(not wasActive and not isProblem and counter > 10):
-			logMessage = "MAINTAINED INACTIVE"	
 
 		if(logMessage != ""):
 			WriteToLog(logMessage + "," + str(curTemp));
@@ -117,8 +106,6 @@ except Exception as e:
 	WriteToLog(e)
 finally:
 	GPIO.cleanup()
-
-
 		
 GPIO.cleanup()
 	
