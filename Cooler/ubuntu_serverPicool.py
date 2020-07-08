@@ -18,13 +18,26 @@ logFileLocation -> where the logs go
 dangerTemp = 60
 pollTime = 60
 outputPin = 18
-sysfs_root = "/sys/class/gpio/gpio"+str(outputPin)
+sysfs_root = "/sys/class/gpio"
+control_root = "/sys/class/gpio/"+"gpio"+str(outputPin)
 
 '''
 Setup the output
 '''
 def Setup():
-	sysfs_handle = open(sysfs_root+"/direction", "w")
+	sysfs_root = "/sys/class/gpio"
+	#Setup Sysfile
+	WriteToLog("sysfs_root: " + sysfs_root)
+	sysfs_setup = open(sysfs_root+"/export","w",2)
+	sysfs_setup.write(str(outputPin))
+	
+	#change root
+	control_root = sysfs_root + "/gpio" + str(outputPin)
+	
+	WriteToLog("control_root: " + control_root)
+	sysfs_handle = open(control_root+"/direction", "w")
+
+	# setup handle 
 	if(sysfs_handle):
 		sysfs_handle.write("out")
 		WriteToLog("Setup Fan Control on Pin: " + str(outputPin))
@@ -47,7 +60,7 @@ def ReadTemperature():
 '''
 def WriteToLog(info,firstEntry=False,level='I'):
 	logEntry = str(info) + "\n"
-	journal.write(logEntry)
+	#journal.write(logEntry)
 	print(logEntry)
 
 '''
@@ -55,7 +68,7 @@ Deactivates the Fan
 @precond fan 5v input is hooked up to GPIO pin 18
 '''
 def DeactivateFan():
-	sysfs_handle = open(sysfs_root+"/value", "w")
+	sysfs_handle = open(control_root+"/value", "w")
 	if(sysfs_handle):
 		sysfs_handle.write("0")
 	else:
@@ -69,7 +82,7 @@ Activates the fan
 it to be configured)
 '''
 def ActivateFan():
-	sysfs_handle = open(sysfs_root+"/value", "w")
+	sysfs_handle = open(control_root+"/value", "w")
 	if(sysfs_handle):
 		sysfs_handle.write("1")
 	else:
