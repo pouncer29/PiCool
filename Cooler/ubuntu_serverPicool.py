@@ -60,7 +60,7 @@ def ReadTemperature():
 '''
 def WriteToLog(info,firstEntry=False,level='I'):
 	logEntry = str(info) + "\n"
-	#journal.write(logEntry)
+	journal.write(logEntry)
 	print(logEntry)
 
 '''
