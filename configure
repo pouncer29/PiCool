@@ -30,6 +30,8 @@ uname -v  | egrep "Ubuntu"
 ISUBUNTU=$?
 
 # Get Dependancies 
+sudo apt install python3
+sudo apt install python3-pip
 pip3 install systemd
 sudo apt install libsystemd-dev
 
@@ -37,7 +39,7 @@ if [ ISUBUNTU -ne 0 ]; then
 	cp $TEMPLATEPATH/.template.py $TEMPLATEPATH/piCool.py
 else
 	cp $TEMPLATEPATH/.ubuntu_template.py $TEMPLATEPATH/piCool.py
-
+fi
 TEMPLATE=$TEMPLATEPATH/piCool.py
 
 #Preform Replacement
