@@ -25,7 +25,18 @@ fi
 
 #Move Template txt to pyCool
 TEMPLATEPATH="`pwd`/Cooler"
-cp $TEMPLATEPATH/.template.py $TEMPLATEPATH/piCool.py
+
+uname -v  | egrep "Ubuntu"
+ISUBUNTU=$?
+
+# Get Dependancies 
+pip3 install systemd
+sudo apt install libsystemd-dev
+
+if [ ISUBUNTU -ne 0 ]; then
+	cp $TEMPLATEPATH/.template.py $TEMPLATEPATH/piCool.py
+else
+	cp $TEMPLATEPATH/.ubuntu_template.py $TEMPLATEPATH/piCool.py
 
 TEMPLATE=$TEMPLATEPATH/piCool.py
 
