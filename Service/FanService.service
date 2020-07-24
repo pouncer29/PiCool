@@ -6,7 +6,7 @@ Type=simple
 Restart=always
 RestartSec=10
 User=ubuntu
-ExecStart=/home/ubuntu/Projects/PiCool/Cooler/ubuntu_serverPicool.py
+ExecStart=/home/ubuntu/Projects/PiCool/Cooler/piCool.py
 
 [Install]
 WantedBy=multi-user.target

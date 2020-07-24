@@ -23,11 +23,23 @@ if [ $? -ne 0 ]; then
 	exit 1
 fi
 
-#Move Template txt to pyCool
-TEMPLATEPATH="`pwd`/Cooler"
+which landscape-sysinfo
+LANDSCAPE=$?
+which vgencmd
+VGENCMD=$?
+READER=""
 
-uname -v  | egrep "Ubuntu"
-ISUBUNTU=$?
+if [ $LANDSCAPE -eq 0 ]; then
+	READER="landscape-sysinfo"
+	echo "Using landscape-sysinfo to read temp"
+elif [ $VGENCMD -eq 0 ]; then
+	READER="vgencmd"
+	echo "Using landscape-sysinfo to read temp"
+else
+	echo "******** ERROR!! No temperature reader method found! *********"
+	exit 1
+fi
+
 
 # Get Dependancies 
 sudo apt install python3
@@ -35,17 +47,17 @@ sudo apt install python3-pip
 pip3 install systemd
 sudo apt install libsystemd-dev
 
-if [ ISUBUNTU -ne 0 ]; then
-	cp $TEMPLATEPATH/.template.py $TEMPLATEPATH/piCool.py
-else
-	cp $TEMPLATEPATH/.ubuntu_template.py $TEMPLATEPATH/piCool.py
-fi
+#Move Template txt to pyCool
+TEMPLATEPATH="`pwd`/Cooler"
+cp $TEMPLATEPATH/.template.py $TEMPLATEPATH/piCool.py
+
 TEMPLATE=$TEMPLATEPATH/piCool.py
 
 #Preform Replacement
 sed -i "s/<DANGERTEMP>/$1/g" $TEMPLATE
 sed -i "s/<POLLTIME>/$2/g" $TEMPLATE
 sed -i "s/<OUTPUTPIN>/$3/g" $TEMPLATE
+sed -i "s/<READER>/\"$READER\"/g" $TEMPLATE
 
 SERVICELOC=/etc/systemd/system
 
