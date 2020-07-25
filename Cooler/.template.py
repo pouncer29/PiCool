@@ -35,7 +35,7 @@ Reads the temperature of the raspi
 '''
 def ReadTemperature():
 	temp = "0.0"
-	if reader is 'vgencmd':
+	if reader is 'vcgencmd':
 		temp = os.popen("vcgencmd measure_temp").readline()
 		temp = temp.replace("'C","")
 		temp = temp.replace("temp=","")

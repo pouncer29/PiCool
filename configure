@@ -25,18 +25,18 @@ fi
 
 which landscape-sysinfo
 LANDSCAPE=$?
-which vgencmd
-VGENCMD=$?
+which vcgencmd
+VCGENCMD=$?
 READER=""
 
 if [ $LANDSCAPE -eq 0 ]; then
 	READER="landscape-sysinfo"
 	echo "Using landscape-sysinfo to read temp"
-elif [ $VGENCMD -eq 0 ]; then
-	READER="vgencmd"
+elif [ $VCGENCMD -eq 0 ]; then
+	READER="vcgencmd"
 	echo "Using landscape-sysinfo to read temp"
 else
-	echo "******** ERROR!! No temperature reader method found! *********"
+	echo "******** ERROR!! No tempearture provider found! *********"
 	exit 1
 fi
 
