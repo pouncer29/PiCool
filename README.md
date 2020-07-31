@@ -36,6 +36,12 @@ To Reconfigure the script, you'll need to...
 The Execution and activation of the Logs is logged with the Service. The configure script will create an alias that lists the last log message containing the temperature if you choose it in the `configure` script.
 
 ## Misc
+### My Configuration
+I Like to use 
+* `60`<sup>o</sup>C as my temp
+* `60`s as my polling interval
+* and setup my fan on pin `18`
+
 ### My Cooling Aparatus
 [This is the cooling aparatus I got](https://www.amazon.ca/gp/product/B07MW3GM1T/ref=ppx_yo_dt_b_asin_title_o02_s00?ie=UTF8&psc=1) but the script will work for anything that depends on temperature and is hooked up to the configured pin.
 

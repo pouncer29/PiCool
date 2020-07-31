@@ -3,22 +3,23 @@
 #	    Synopsis: python - beans on toast... weird
 
 import RPi.GPIO as GPIO
+from systemd import journal
 import time
 import random
-from datetime import datetime
+import sys
 import os
 
 '''
 Configurable values
 dangerTemp -> the temp we activate the fan at.
 poll time -> amount of time in secons that we check the temp at
-outputPin -> the pin we hooked the fan up to
+outputPin -> the GPIO pin we hooked the fan up to
+logFileLocation -> where the logs go
 '''
-dangerTemp = 80.0
-pollTime = 5 
+dangerTemp = 55
+pollTime = 30
 outputPin = 18
-HOME = os.path.expanduser('~')
-logFileLocation = HOME + "/Logs/piTempLog" + ".csv"
+reader = "landscape-sysinfo"
 
 '''
 Setup the output
@@ -26,28 +27,36 @@ Setup the output
 def Setup():
 	GPIO.setmode(GPIO.BCM)
 	GPIO.setup(outputPin,GPIO.OUT)
+	WriteToLog("Setup Fan Control on Pin: " + str(outputPin))
 	return
 
 '''
 Reads the temperature of the raspi
 '''
 def ReadTemperature():
-	temp = os.popen("vcgencmd measure_temp").readline()
-	temp = temp.replace("'C","")
-	temp = temp.replace("temp=","")
-	#print("Read Temp is" + temp);
+	temp = "0.0"
+	if reader is 'vgencmd':
+		temp = os.popen("vcgencmd measure_temp").readline()
+		temp = temp.replace("'C","")
+		temp = temp.replace("temp=","")
+	elif reader is 'landscape-sysinfo':
+		temp = os.popen("landscape-sysinfo --sysinfo-plugins=Temperature").readline()
+		temp = temp.replace("C","")
+		temp = temp.replace("Temperature:","")
+		temp = temp.strip()
+	else:
+		WriteToLog("No suitable method of reading temperature found. See documentation")
+
 	return (float) (temp)
 
 '''
-	writes to the logfile
+	Writes to the service log
 '''
-def WriteToLog(info):
-	logEntry = str(datetime.now()) + "," + str(info) + "\n"
+def WriteToLog(info,firstEntry=False):
+	logEntry = str(info) + "\n"
+	journal.write(logEntry)
 	#print(logEntry)
-	with open(logFileLocation,"a",encoding = 'utf-8') as log:
-		log.write(logEntry)
 	return
-
 
 '''
 Deactivates the Fan
@@ -67,16 +76,31 @@ def ActivateFan():
 	return
 
 try:
+	WriteToLog("Beginning Script: " +
+	"Initial temp is: " + str(ReadTemperature()) + "C. " +
+	"OutputPin is: "+ str(outputPin) +
+	" Polling Time: "+ str(pollTime) + "s. " +
+	"Danger Temp: " + str(dangerTemp) + "C. ",True)
+	
 	Setup()
+	DeactivateFan()
 	wasActive = False
+	counter = 0;
+
 	while ...:
-		#curTemp = ReadTemperature()
-		curTemp = random.uniform(50,100)
+		curTemp = ReadTemperature()
 		isProblem = curTemp > dangerTemp
 		logMessage = ""
-		if(not wasActive and isProblem):
+
+		# If it's been awhile, we should show what's going on.
+		if(not wasActive and not isProblem and counter > 10):
+			logMessage = "MAINTAINED INACTIVE"	
+
+		if(isProblem):
 			ActivateFan()
 			logMessage = "ACTIVATED FAN"
+			if(wasActive):
+				logMessage = "MAINTAINTED FAN"
 			wasActive = True
 		elif(wasActive and  not isProblem):
 			DeactivateFan()
@@ -86,14 +110,14 @@ try:
 		if(logMessage != ""):
 			WriteToLog(logMessage + "," + str(curTemp));
 
+		counter += 1
 		time.sleep(pollTime);
 except Exception as e:
 	WriteToLog(e)
 finally:
 	GPIO.cleanup()
-
-
 		
+GPIO.cleanup()
 	
 	
 

@@ -19,6 +19,7 @@ logFileLocation -> where the logs go
 dangerTemp = <DANGERTEMP>
 pollTime = <POLLTIME>
 outputPin = <OUTPUTPIN>
+reader = <READER>
 
 '''
 Setup the output
@@ -33,10 +34,19 @@ def Setup():
 Reads the temperature of the raspi
 '''
 def ReadTemperature():
-	temp = os.popen("vcgencmd measure_temp").readline()
-	temp = temp.replace("'C","")
-	temp = temp.replace("temp=","")
-	#print("Read Temp is" + temp);
+	temp = "0.0"
+	if reader is 'vcgencmd':
+		temp = os.popen("vcgencmd measure_temp").readline()
+		temp = temp.replace("'C","")
+		temp = temp.replace("temp=","")
+	elif reader is 'landscape-sysinfo':
+		temp = os.popen("landscape-sysinfo --sysinfo-plugins=Temperature").readline()
+		temp = temp.replace("C","")
+		temp = temp.replace("Temperature:","")
+		temp = temp.strip()
+	else:
+		WriteToLog("No suitable method of reading temperature found. See documentation")
+
 	return (float) (temp)
 
 '''
