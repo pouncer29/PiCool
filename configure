@@ -23,6 +23,31 @@ if [ $? -ne 0 ]; then
 	exit 1
 fi
 
+which landscape-sysinfo
+LANDSCAPE=$?
+which vcgencmd
+VCGENCMD=$?
+READER=""
+
+if [ $LANDSCAPE -eq 0 ]; then
+	READER="landscape-sysinfo"
+	echo "Using landscape-sysinfo to read temp"
+elif [ $VCGENCMD -eq 0 ]; then
+	READER="vcgencmd"
+	echo "Using landscape-sysinfo to read temp"
+else
+	echo "******** ERROR!! No tempearture provider found! *********"
+	exit 1
+fi
+
+
+# Get Dependancies 
+sudo apt update
+sudo apt install python3
+sudo apt install python3-pip
+pip3 install systemd
+sudo apt install libsystemd-dev
+
 #Move Template txt to pyCool
 TEMPLATEPATH="`pwd`/Cooler"
 cp $TEMPLATEPATH/.template.py $TEMPLATEPATH/piCool.py
@@ -33,6 +58,7 @@ TEMPLATE=$TEMPLATEPATH/piCool.py
 sed -i "s/<DANGERTEMP>/$1/g" $TEMPLATE
 sed -i "s/<POLLTIME>/$2/g" $TEMPLATE
 sed -i "s/<OUTPUTPIN>/$3/g" $TEMPLATE
+sed -i "s/<READER>/\"$READER\"/g" $TEMPLATE
 
 SERVICELOC=/etc/systemd/system
 
