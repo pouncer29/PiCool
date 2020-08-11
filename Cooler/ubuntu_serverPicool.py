@@ -18,6 +18,7 @@ logFileLocation -> where the logs go
 dangerTemp = 60
 pollTime = 60
 outputPin = 18
+reader = <READER>
 sysfs_root = "/sys/class/gpio/gpio"+str(outputPin)
 
 '''

@@ -2,12 +2,12 @@
 #       Name: Frank Lewis
 #	    Synopsis: python - beans on toast... weird
 
-import RPi.GPIO as GPIO
-from systemd import journal
+import logging
 import time
 import random
 import sys
 import os
+from systemd import journal
 
 '''
 Configurable values
@@ -19,30 +19,42 @@ logFileLocation -> where the logs go
 dangerTemp = <DANGERTEMP>
 pollTime = <POLLTIME>
 outputPin = <OUTPUTPIN>
+reader = <READER>
 
 '''
 Setup the output
 '''
 def Setup():
-	GPIO.setmode(GPIO.BCM)
-	GPIO.setup(outputPin,GPIO.OUT)
-	WriteToLog("Setup Fan Control on Pin: " + str(outputPin))
+	sysfs_handle = open(sysfs_root+"/direction", "w")
+	if(sysfs_handle):
+		sysfs_handle.write("out")
+		WriteToLog("Setup Fan Control on Pin: " + str(outputPin))
+	else:
+		WriteToLog("Could not setup fan control. Are you root?",level="E")
 	return
 
 '''
 Reads the temperature of the raspi
 '''
 def ReadTemperature():
-	temp = os.popen("vcgencmd measure_temp").readline()
-	temp = temp.replace("'C","")
-	temp = temp.replace("temp=","")
-	#print("Read Temp is" + temp);
+	if reader == "landscape-sysinfo":
+		temp = os.popen("landscape-sysinfo --sysinfo-plugins=Temperature").readline()
+		temp = temp.replace("C","")
+		temp = temp.replace("Temperature:","")
+		temp = temp.strip()
+	elif reader == "vcgencmd":
+		temp = os.popen("vcgencmd measure_temp").readline()
+		temp = temp.replace("'C","")
+		temp = temp.replace("temp=","")
+		#print("Read Temp is" + temp);
+	else:
+		raise Exception("Unrecognized reader " + reader + " Used")
 	return (float) (temp)
 
 '''
 	Writes to the service log
 '''
-def WriteToLog(info,firstEntry=False):
+def WriteToLog(info,firstEntry=False,level='I'):
 	logEntry = str(info) + "\n"
 	journal.write(logEntry)
 	#print(logEntry)
@@ -53,7 +65,11 @@ Deactivates the Fan
 @precond fan 5v input is hooked up to GPIO pin 18
 '''
 def DeactivateFan():
-	GPIO.output(outputPin,GPIO.LOW)
+	sysfs_handle = open(sysfs_root+"/value", "w")
+	if(sysfs_handle):
+		sysfs_handle.write("0")
+	else:
+		WriteToLog("Could not Deactiate fan",level="E");
 	return
 
 '''
@@ -62,52 +78,54 @@ Activates the fan
 it to be configured)
 '''
 def ActivateFan():
-	GPIO.output(outputPin,GPIO.HIGH)
-	return
+	sysfs_handle = open(sysfs_root+"/value", "w")
+	if(sysfs_handle):
+		sysfs_handle.write("1")
+	else:
+		WriteToLog("Could not Activate fan",level="E");
 
-try:
-	WriteToLog("Beginning Script: " +
-	"Initial temp is: " + str(ReadTemperature()) + "C. " +
-	"OutputPin is: "+ str(outputPin) +
-	" Polling Time: "+ str(pollTime) + "s. " +
-	"Danger Temp: " + str(dangerTemp) + "C. ",True)
-	
-	Setup()
-	DeactivateFan()
-	wasActive = False
-	counter = 0;
-
-	while ...:
-		curTemp = ReadTemperature()
-		isProblem = curTemp > dangerTemp
-		logMessage = ""
-
-		# If it's been awhile, we should show what's going on.
-		if(not wasActive and not isProblem and counter > 10):
-			logMessage = "MAINTAINED INACTIVE"	
-
-		if(isProblem):
-			ActivateFan()
-			logMessage = "ACTIVATED FAN"
-			if(wasActive):
-				logMessage = "MAINTAINTED FAN"
-			wasActive = True
-		elif(wasActive and  not isProblem):
-			DeactivateFan()
-			logMessage = "DEACTIVATED FAN"
-			wasActive = False
-
-		if(logMessage != ""):
-			WriteToLog(logMessage + "," + str(curTemp));
-
-		counter += 1
-		time.sleep(pollTime);
-except Exception as e:
-	WriteToLog(e)
-finally:
-	GPIO.cleanup()
+def main():
+	try:
+		WriteToLog("Beginning Script: " +
+		"Initial temp is: " + str(ReadTemperature()) + "C. " +
+		"OutputPin is: "+ str(outputPin) +
+		" Polling Time: "+ str(pollTime) + "s. " +
+		"Danger Temp: " + str(dangerTemp) + "C. ",True)
 		
-GPIO.cleanup()
-	
-	
+		Setup()
+		DeactivateFan()
+		wasActive = False
+		counter = 0;
+
+		while ...:
+			curTemp = ReadTemperature()
+			isProblem = curTemp > dangerTemp
+			logMessage = ""
+
+			# If it's been awhile, we should show what's going on.
+			if(not wasActive and not isProblem and counter > 10):
+				logMessage = "MAINTAINED INACTIVE"	
+
+			if(isProblem):
+				ActivateFan()
+				logMessage = "ACTIVATED FAN"
+				if(wasActive):
+					logMessage = "MAINTAINTED FAN"
+				wasActive = True
+			elif(wasActive and  not isProblem):
+				DeactivateFan()
+				logMessage = "DEACTIVATED FAN"
+				wasActive = False
+
+			if(logMessage != ""):
+				WriteToLog(logMessage + "," + str(curTemp));
+
+			counter += 1
+			time.sleep(pollTime);
+	except Exception as e:
+		DeactivateFan()
+		WriteToLog("EXITING SCRIPT DUE TO EXCEPTION" + e)
+
+if __name__ "__main__":
+	main()
 
