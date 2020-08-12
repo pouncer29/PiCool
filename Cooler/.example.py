@@ -2,59 +2,86 @@
 #       Name: Frank Lewis
 #	    Synopsis: python - beans on toast... weird
 
-import RPi.GPIO as GPIO
+import logging
 import time
 import random
-from datetime import datetime
-import os
+import sys
+import os 
+from systemd import journal
 
 '''
 Configurable values
 dangerTemp -> the temp we activate the fan at.
 poll time -> amount of time in secons that we check the temp at
-outputPin -> the pin we hooked the fan up to
+outputPin -> the GPIO pin we hooked the fan up to
+logFileLocation -> where the logs go
 '''
-dangerTemp = 80.0
-pollTime = 5 
+dangerTemp = 55
+pollTime = 60
 outputPin = 18
-HOME = os.path.expanduser('~')
-logFileLocation = HOME + "/Logs/piTempLog" + ".csv"
+reader = "landscape-sysinfo"
+sysfs_root = "/sys/class/gpio"
+sysfs_gpio_root= "/sys/class/gpio/gpio"+str(outputPin)
 
 '''
 Setup the output
 '''
 def Setup():
-	GPIO.setmode(GPIO.BCM)
-	GPIO.setup(outputPin,GPIO.OUT)
-	return
+	pathExists = os.path.exists(sysfs_gpio_root)
+	if pathExists == False:
+		WriteToLog("Beginning Setup from start")
+		sysfs_export = open(sysfs_root+"/export", "w")
+		if sysfs_export:
+			sysfs_export.write(str(outputPin))
+			sysfs_export.close()
+			WriteToLog("exported to path: "+sysfs_root+"/export")
+			sysfs_direction = open(sysfs_gpio_root+"/direction","w")
+			if sysfs_direction:
+				sysfs_direction.write("out")
+				WriteToLog("gpio set up at "+sysfs_gpio_root)	
+			
+	else:
+		WriteToLog("Path " + sysfs_gpio_root+ " already exists")
+		
+	WriteToLog("Setup Fan Control on Pin: " + str(outputPin))
 
 '''
 Reads the temperature of the raspi
 '''
 def ReadTemperature():
-	temp = os.popen("vcgencmd measure_temp").readline()
-	temp = temp.replace("'C","")
-	temp = temp.replace("temp=","")
-	#print("Read Temp is" + temp);
+	if reader == "landscape-sysinfo":
+		temp = os.popen("landscape-sysinfo --sysinfo-plugins=Temperature").readline()
+		temp = temp.replace("C","")
+		temp = temp.replace("Temperature:","")
+		temp = temp.strip()
+	elif reader == "vcgencmd":
+		temp = os.popen("vcgencmd measure_temp").readline()
+		temp = temp.replace("'C","")
+		temp = temp.replace("temp=","")
+		#print("Read Temp is" + temp);
+	else:
+		raise Exception("Unrecognized reader " + reader + " Used")
 	return (float) (temp)
 
 '''
-	writes to the logfile
+	Writes to the service log
 '''
-def WriteToLog(info):
-	logEntry = str(datetime.now()) + "," + str(info) + "\n"
-	#print(logEntry)
-	with open(logFileLocation,"a",encoding = 'utf-8') as log:
-		log.write(logEntry)
+def WriteToLog(info,firstEntry=False,level='I'):
+	logEntry = str(info) + "\n"
+	#journal.write(logEntry)
+	print(logEntry)
 	return
-
 
 '''
 Deactivates the Fan
 @precond fan 5v input is hooked up to GPIO pin 18
 '''
 def DeactivateFan():
-	GPIO.output(outputPin,GPIO.LOW)
+	sysfs_handle = open(sysfs_gpio_root+"/value", "w")
+	if(sysfs_handle):
+		sysfs_handle.write("0")
+	else:
+		WriteToLog("Could not Deactiate fan",level="E");
 	return
 
 '''
@@ -63,37 +90,55 @@ Activates the fan
 it to be configured)
 '''
 def ActivateFan():
-	GPIO.output(outputPin,GPIO.HIGH)
-	return
+	sysfs_handle = open(sysfs_gpio_root+"/value", "w")
+	WriteToLog("Activating at path: "+sysfs_gpio_root+"/value")
+	if(sysfs_handle):
+		sysfs_handle.write("1")
+	else:
+		WriteToLog("Could not Activate fan",level="E");
 
-try:
-	Setup()
-	wasActive = False
-	while ...:
-		#curTemp = ReadTemperature()
-		curTemp = random.uniform(50,100)
-		isProblem = curTemp > dangerTemp
-		logMessage = ""
-		if(not wasActive and isProblem):
-			ActivateFan()
-			logMessage = "ACTIVATED FAN"
-			wasActive = True
-		elif(wasActive and  not isProblem):
-			DeactivateFan()
-			logMessage = "DEACTIVATED FAN"
-			wasActive = False
-
-		if(logMessage != ""):
-			WriteToLog(logMessage + "," + str(curTemp));
-
-		time.sleep(pollTime);
-except Exception as e:
-	WriteToLog(e)
-finally:
-	GPIO.cleanup()
-
-
+def main():
+	try:
+		WriteToLog("Beginning Script: " +
+		"Initial temp is: " + str(ReadTemperature()) + "C. " +
+		"OutputPin is: "+ str(outputPin) +
+		" Polling Time: "+ str(pollTime) + "s. " +
+		"Danger Temp: " + str(dangerTemp) + "C. ",True)
 		
-	
-	
+		Setup()
+		DeactivateFan()
+		wasActive = False
+		counter = 0;
+
+		while ...:
+			curTemp = ReadTemperature()
+			isProblem = curTemp > dangerTemp
+			logMessage = ""
+
+			# If it's been awhile, we should show what's going on.
+			if(not wasActive and not isProblem and counter > 10):
+				logMessage = "MAINTAINED INACTIVE"	
+
+			if(isProblem):
+				ActivateFan()
+				logMessage = "ACTIVATED FAN"
+				if(wasActive):
+					logMessage = "MAINTAINTED FAN"
+				wasActive = True
+			elif(wasActive and  not isProblem):
+				DeactivateFan()
+				logMessage = "DEACTIVATED FAN"
+				wasActive = False
+
+			if(logMessage != ""):
+				WriteToLog(logMessage + "," + str(curTemp));
+
+			counter += 1
+			time.sleep(pollTime);
+	except Exception as e:
+		#DeactivateFan()
+		WriteToLog("EXITING SCRIPT DUE TO EXCEPTION: " + str(e))
+
+if __name__ == "__main__":
+	main()
 

@@ -20,6 +20,7 @@ dangerTemp = <DANGERTEMP>
 pollTime = <POLLTIME>
 outputPin = <OUTPUTPIN>
 reader = <READER>
+sysfs_root = "/sys/class/gpio/gpio"+str(outputPin)
 
 '''
 Setup the output
@@ -126,6 +127,6 @@ def main():
 		DeactivateFan()
 		WriteToLog("EXITING SCRIPT DUE TO EXCEPTION" + e)
 
-if __name__ "__main__":
+if __name__ == "__main__":
 	main()
 
