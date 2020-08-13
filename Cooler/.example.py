@@ -2,7 +2,6 @@
 #       Name: Frank Lewis
 #	    Synopsis: python - beans on toast... weird
 
-import logging
 import time
 import random
 import sys
@@ -16,7 +15,7 @@ poll time -> amount of time in secons that we check the temp at
 outputPin -> the GPIO pin we hooked the fan up to
 logFileLocation -> where the logs go
 '''
-dangerTemp = 55
+dangerTemp = 52
 pollTime = 60
 outputPin = 18
 reader = "landscape-sysinfo"
@@ -35,10 +34,12 @@ def Setup():
 			sysfs_export.write(str(outputPin))
 			sysfs_export.close()
 			WriteToLog("exported to path: "+sysfs_root+"/export")
-			sysfs_direction = open(sysfs_gpio_root+"/direction","w")
-			if sysfs_direction:
-				sysfs_direction.write("out")
-				WriteToLog("gpio set up at "+sysfs_gpio_root)	
+
+
+	sysfs_direction = open(sysfs_gpio_root+"/direction","w")
+	if sysfs_direction:
+		sysfs_direction.write("out")
+		WriteToLog("gpio set up at "+sysfs_gpio_root)	
 			
 	else:
 		WriteToLog("Path " + sysfs_gpio_root+ " already exists")
@@ -68,7 +69,7 @@ def ReadTemperature():
 '''
 def WriteToLog(info,firstEntry=False,level='I'):
 	logEntry = str(info) + "\n"
-	#journal.write(logEntry)
+	journal.write(logEntry)
 	print(logEntry)
 	return
 

@@ -5,7 +5,7 @@ Description=Fan Controlling Script
 Type=simple
 Restart=always
 RestartSec=10
-User=ubuntu
+User=pi
 ExecStart=/home/ubuntu/Projects/PiCool/Cooler/piCool.py
 
 [Install]
