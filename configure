@@ -76,7 +76,7 @@ else
 fi
 
 #Check Pin Configuration
-cat $PINROOT/direction | grep "out"
+cat $PINROOT/direction | egrep -q "out"
 DIRECTIONSET=$?
 if [ $DIRECTIONSET -eq 0 ]; then
 	echo "Pin $3 is configured for output"
@@ -86,14 +86,12 @@ else
 	echo "Pin $3 is configured for output"
 fi
 
-exit 1
-
 SERVICELOC=/etc/systemd/system
 
 #Check For Service
 if [ -f $SERVICELOC/FanService.service ]; then
 	echo "Service \"FanService.service\" already exists at $SERVICELOC" 
-	echo "Remove it to reconfigure."
+	sudo systemctl daemon-reload
 else
 	#GetDir
 	SERVICEPATH="`pwd`/Service"
@@ -102,6 +100,7 @@ else
 	cp $SERVICEPATH/.template.service $SERVICEPATH/FanService.service
 	SERVICE=$SERVICEPATH/FanService.service
 	sed -i "s|<PYPATH>|$TEMPLATE|g" $SERVICE
+	sed -i "s|<PYPATH>|$USER|g" $SERVICE
 	echo "Creatd Service at: $SERVICE pointing at script: $TEMPLATE"
 
 	echo "Create Service Symlink"
@@ -116,7 +115,6 @@ if [ $? -ne 0 ];then
 	echo "Failed to restart service FanService.service"
 	exit 1
 fi
-
 
 read -p "Create \"temp\" alias to list temp at: ~/.bashrc? [Y/n]" -n 1 -r
 echo
