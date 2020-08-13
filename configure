@@ -60,6 +60,13 @@ sed -i "s/<POLLTIME>/$2/g" $TEMPLATE
 sed -i "s/<OUTPUTPIN>/$3/g" $TEMPLATE
 sed -i "s/<READER>/\"$READER\"/g" $TEMPLATE
 
+#Setup GPIO
+echo "Setting up GPIO on pin $3..."
+GPIOROOT=/sys/class/gpio
+PINROOT=$GPIOROOT/gpio$3
+echo "PINROOT is $PINROOT"
+exit 1
+
 SERVICELOC=/etc/systemd/system
 
 #Check For Service
@@ -81,6 +88,7 @@ else
 	sudo systemctl enable FanService.service
 	echo "Created service Symlink for $SERVICE attempting start..."
 fi
+
 
 sudo systemctl restart FanService.service
 if [ $? -ne 0 ];then

@@ -20,19 +20,32 @@ dangerTemp = <DANGERTEMP>
 pollTime = <POLLTIME>
 outputPin = <OUTPUTPIN>
 reader = <READER>
-sysfs_root = "/sys/class/gpio/gpio"+str(outputPin)
+sysfs_root = "/sys/class/gpio"
+sysfs_gpio_root= "/sys/class/gpio/gpio"+str(outputPin)
 
 '''
 Setup the output
 '''
 def Setup():
-	sysfs_handle = open(sysfs_root+"/direction", "w")
-	if(sysfs_handle):
-		sysfs_handle.write("out")
-		WriteToLog("Setup Fan Control on Pin: " + str(outputPin))
+	pathExists = os.path.exists(sysfs_gpio_root)
+	if pathExists == False:
+		WriteToLog("Beginning Setup from start")
+		sysfs_export = open(sysfs_root+"/export", "w")
+		if sysfs_export:
+			sysfs_export.write(str(outputPin))
+			sysfs_export.close()
+			WriteToLog("exported to path: "+sysfs_root+"/export")
+
+
+	sysfs_direction = open(sysfs_gpio_root+"/direction","w")
+	if sysfs_direction:
+		sysfs_direction.write("out")
+		WriteToLog("gpio set up at "+sysfs_gpio_root)	
+			
 	else:
-		WriteToLog("Could not setup fan control. Are you root?",level="E")
-	return
+		WriteToLog("Path " + sysfs_gpio_root+ " already exists")
+		
+	WriteToLog("Setup Fan Control on Pin: " + str(outputPin))
 
 '''
 Reads the temperature of the raspi
@@ -58,7 +71,7 @@ def ReadTemperature():
 def WriteToLog(info,firstEntry=False,level='I'):
 	logEntry = str(info) + "\n"
 	journal.write(logEntry)
-	#print(logEntry)
+	print(logEntry)
 	return
 
 '''
@@ -66,7 +79,7 @@ Deactivates the Fan
 @precond fan 5v input is hooked up to GPIO pin 18
 '''
 def DeactivateFan():
-	sysfs_handle = open(sysfs_root+"/value", "w")
+	sysfs_handle = open(sysfs_gpio_root+"/value", "w")
 	if(sysfs_handle):
 		sysfs_handle.write("0")
 	else:
@@ -79,7 +92,8 @@ Activates the fan
 it to be configured)
 '''
 def ActivateFan():
-	sysfs_handle = open(sysfs_root+"/value", "w")
+	sysfs_handle = open(sysfs_gpio_root+"/value", "w")
+	WriteToLog("Activating at path: "+sysfs_gpio_root+"/value")
 	if(sysfs_handle):
 		sysfs_handle.write("1")
 	else:
@@ -124,8 +138,8 @@ def main():
 			counter += 1
 			time.sleep(pollTime);
 	except Exception as e:
-		DeactivateFan()
-		WriteToLog("EXITING SCRIPT DUE TO EXCEPTION" + e)
+		#DeactivateFan()
+		WriteToLog("EXITING SCRIPT DUE TO EXCEPTION: " + str(e))
 
 if __name__ == "__main__":
 	main()
