@@ -65,6 +65,27 @@ echo "Setting up GPIO on pin $3..."
 GPIOROOT=/sys/class/gpio
 PINROOT=$GPIOROOT/gpio$3
 echo "PINROOT is $PINROOT"
+
+## Check if Pin setup
+if [ -f $PINROOT ]; then
+	echo "Pin is $3 set up for GPIO"
+else
+	echo "Setting up pin $3 for GPIO..."
+	echo $3 > /sys/class/gpio/export
+	echo "Pin $3 setup for GPIO"
+fi
+
+#Check Pin Configuration
+cat $PINROOT/direction | grep "out"
+DIRECTIONSET=$?
+if [ $DIRECTIONSET -eq 0 ]; then
+	echo "Pin $3 is configured for output"
+else
+	echo "Configureing pin $3 as Output"
+	sudo sh -c "echo 'out' > $PINROOT/direction"
+	echo "Pin $3 is configured for output"
+fi
+
 exit 1
 
 SERVICELOC=/etc/systemd/system
