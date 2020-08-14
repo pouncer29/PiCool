@@ -23,6 +23,31 @@ if [ $? -ne 0 ]; then
 	exit 1
 fi
 
+which landscape-sysinfo > /dev/null 2>&1
+LANDSCAPE=$?
+which vcgencmd > /dev/null 2>&1
+VCGENCMD=$?
+READER=""
+
+if [ $LANDSCAPE -eq 0 ]; then
+	READER="landscape-sysinfo"
+	echo "Using landscape-sysinfo to read temp"
+elif [ $VCGENCMD -eq 0 ]; then
+	READER="vcgencmd"
+	echo "Using landscape-sysinfo to read temp"
+else
+	echo "******** ERROR!! No tempearture provider found! *********"
+	exit 1
+fi
+
+
+# Get Dependancies 
+sudo apt update
+sudo apt install python3
+sudo apt install python3-pip
+pip3 install systemd
+sudo apt install libsystemd-dev
+
 #Move Template txt to pyCool
 TEMPLATEPATH="`pwd`/Cooler"
 cp $TEMPLATEPATH/.template.py $TEMPLATEPATH/piCool.py
@@ -33,35 +58,62 @@ TEMPLATE=$TEMPLATEPATH/piCool.py
 sed -i "s/<DANGERTEMP>/$1/g" $TEMPLATE
 sed -i "s/<POLLTIME>/$2/g" $TEMPLATE
 sed -i "s/<OUTPUTPIN>/$3/g" $TEMPLATE
+sed -i "s/<READER>/\"$READER\"/g" $TEMPLATE
+
+#Setup GPIO
+echo "Setting up GPIO on pin $3..."
+GPIOROOT=/sys/class/gpio
+PINROOT=$GPIOROOT/gpio$3
+
+## Check if Pin setup
+if [ -d $PINROOT ]; then
+	echo "Pin $3 is set up for GPIO"
+else
+	echo "Setting up pin $3 for GPIO..."
+	echo $3 > /sys/class/gpio/export
+	echo "Pin $3 setup for GPIO"
+fi
+
+#Check Pin Configuration
+cat $PINROOT/direction | egrep -q "out"
+DIRECTIONSET=$?
+if [ $DIRECTIONSET -eq 0 ]; then
+	echo "Pin $3 is configured for output"
+else
+	echo "Configureing pin $3 as Output"
+	sudo sh -c "echo 'out' > $PINROOT/direction"
+	echo "Pin $3 is configured for output"
+fi
 
 SERVICELOC=/etc/systemd/system
 
 #Check For Service
 if [ -f $SERVICELOC/FanService.service ]; then
 	echo "Service \"FanService.service\" already exists at $SERVICELOC" 
-	echo "Remove it to reconfigure."
+	sudo systemctl daemon-reload
 else
 	#GetDir
 	SERVICEPATH="`pwd`/Service"
 
 	#Move the Template Service
 	cp $SERVICEPATH/.template.service $SERVICEPATH/FanService.service
+	echo "Running Script as: $USER"
 	SERVICE=$SERVICEPATH/FanService.service
 	sed -i "s|<PYPATH>|$TEMPLATE|g" $SERVICE
+	sed -i "s|<USER>|$USER|g" $SERVICE
 	echo "Creatd Service at: $SERVICE pointing at script: $TEMPLATE"
-
 	echo "Create Service Symlink"
 	sudo ln -s $SERVICE /etc/systemd/system
 	sudo systemctl enable FanService.service
 	echo "Created service Symlink for $SERVICE attempting start..."
 fi
 
+
 sudo systemctl restart FanService.service
 if [ $? -ne 0 ];then
 	echo "Failed to restart service FanService.service"
 	exit 1
 fi
-
 
 read -p "Create \"temp\" alias to list temp at: ~/.bashrc? [Y/n]" -n 1 -r
 echo

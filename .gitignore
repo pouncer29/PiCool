@@ -133,3 +133,4 @@ Logs/*
 
 #generated files
 Cooler/piCool.py
+Service/FanService.service
