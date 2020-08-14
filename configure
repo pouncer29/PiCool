@@ -23,9 +23,9 @@ if [ $? -ne 0 ]; then
 	exit 1
 fi
 
-which landscape-sysinfo
+which landscape-sysinfo > /dev/null >1
 LANDSCAPE=$?
-which vcgencmd
+which vcgencmd > /dev/null >1
 VCGENCMD=$?
 READER=""
 
@@ -64,11 +64,10 @@ sed -i "s/<READER>/\"$READER\"/g" $TEMPLATE
 echo "Setting up GPIO on pin $3..."
 GPIOROOT=/sys/class/gpio
 PINROOT=$GPIOROOT/gpio$3
-echo "PINROOT is $PINROOT"
 
 ## Check if Pin setup
-if [ -f $PINROOT ]; then
-	echo "Pin is $3 set up for GPIO"
+if [ -d $PINROOT ]; then
+	echo "Pin $3 is set up for GPIO"
 else
 	echo "Setting up pin $3 for GPIO..."
 	echo $3 > /sys/class/gpio/export
@@ -98,11 +97,11 @@ else
 
 	#Move the Template Service
 	cp $SERVICEPATH/.template.service $SERVICEPATH/FanService.service
+	echo "Running Script as: $USER"
 	SERVICE=$SERVICEPATH/FanService.service
 	sed -i "s|<PYPATH>|$TEMPLATE|g" $SERVICE
-	sed -i "s|<PYPATH>|$USER|g" $SERVICE
+	sed -i "s|<USER>|$USER|g" $SERVICE
 	echo "Creatd Service at: $SERVICE pointing at script: $TEMPLATE"
-
 	echo "Create Service Symlink"
 	sudo ln -s $SERVICE /etc/systemd/system
 	sudo systemctl enable FanService.service
