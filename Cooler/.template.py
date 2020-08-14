@@ -14,7 +14,6 @@ Configurable values
 dangerTemp -> the temp we activate the fan at.
 poll time -> amount of time in secons that we check the temp at
 outputPin -> the GPIO pin we hooked the fan up to
-logFileLocation -> where the logs go
 '''
 dangerTemp = <DANGERTEMP>
 pollTime = <POLLTIME>

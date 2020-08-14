@@ -23,9 +23,9 @@ if [ $? -ne 0 ]; then
 	exit 1
 fi
 
-which landscape-sysinfo > /dev/null >1
+which landscape-sysinfo > /dev/null 2>&1
 LANDSCAPE=$?
-which vcgencmd > /dev/null >1
+which vcgencmd > /dev/null 2>&1
 VCGENCMD=$?
 READER=""
 
