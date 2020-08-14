@@ -6,6 +6,7 @@ import logging
 import time
 import random
 import sys
+import signal
 import os
 from systemd import journal
 
@@ -23,10 +24,19 @@ sysfs_root = "/sys/class/gpio"
 sysfs_gpio_root= "/sys/class/gpio/gpio"+str(outputPin)
 
 '''
+Handles the term signal and cleans up
+'''
+def handler(signum,frame):
+	WriteToLog("Script Terminating")
+	DeactivateFan()
+
+
+'''
 Setup the output
 '''
 def Setup():
 	WriteToLog("Setup Fan Control on Pin: " + str(outputPin))
+	signal.signal(signal.SIGTERM,handler)
 
 '''
 Reads the temperature of the raspi
