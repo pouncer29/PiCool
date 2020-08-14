@@ -2,10 +2,11 @@
 #       Name: Frank Lewis
 #	    Synopsis: python - beans on toast... weird
 
+import logging
 import time
 import random
 import sys
-import os 
+import os
 from systemd import journal
 
 '''
@@ -13,9 +14,8 @@ Configurable values
 dangerTemp -> the temp we activate the fan at.
 poll time -> amount of time in secons that we check the temp at
 outputPin -> the GPIO pin we hooked the fan up to
-logFileLocation -> where the logs go
 '''
-dangerTemp = 52
+dangerTemp = 60
 pollTime = 60
 outputPin = 18
 reader = "landscape-sysinfo"
@@ -26,24 +26,6 @@ sysfs_gpio_root= "/sys/class/gpio/gpio"+str(outputPin)
 Setup the output
 '''
 def Setup():
-	pathExists = os.path.exists(sysfs_gpio_root)
-	if pathExists == False:
-		WriteToLog("Beginning Setup from start")
-		sysfs_export = open(sysfs_root+"/export", "w")
-		if sysfs_export:
-			sysfs_export.write(str(outputPin))
-			sysfs_export.close()
-			WriteToLog("exported to path: "+sysfs_root+"/export")
-
-
-	sysfs_direction = open(sysfs_gpio_root+"/direction","w")
-	if sysfs_direction:
-		sysfs_direction.write("out")
-		WriteToLog("gpio set up at "+sysfs_gpio_root)	
-			
-	else:
-		WriteToLog("Path " + sysfs_gpio_root+ " already exists")
-		
 	WriteToLog("Setup Fan Control on Pin: " + str(outputPin))
 
 '''
