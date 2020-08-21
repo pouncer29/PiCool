@@ -6,6 +6,7 @@ import logging
 import time
 import random
 import sys
+import signal
 import os
 from systemd import journal
 
@@ -15,18 +16,35 @@ dangerTemp -> the temp we activate the fan at.
 poll time -> amount of time in secons that we check the temp at
 outputPin -> the GPIO pin we hooked the fan up to
 '''
-dangerTemp = 60
+#parameters
+dangerTemp = 55
 pollTime = 60
 outputPin = 18
+
+# Paths
 reader = "landscape-sysinfo"
 sysfs_root = "/sys/class/gpio"
 sysfs_gpio_root= "/sys/class/gpio/gpio"+str(outputPin)
+#configure_location = "/home/ubuntu/Projects/PiCool/configure"
+
+
+'''
+Handles the term signal and cleans up
+'''
+def handler(signum,frame):
+	WriteToLog("Script Terminating")
+	DeactivateFan()
+	sys.exit(0)
+
 
 '''
 Setup the output
 '''
 def Setup():
+	
+	#config = os.popen(configure_location + " " + outputPin)
 	WriteToLog("Setup Fan Control on Pin: " + str(outputPin))
+	signal.signal(signal.SIGTERM,handler)
 
 '''
 Reads the temperature of the raspi

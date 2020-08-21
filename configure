@@ -3,15 +3,55 @@
 function usage () {
 	echo "usage"
 	echo "config <dangerTemp> <pollTime> <ouputPin>"
+	echo "config <outputPin> (Developer option, only configures GPIO)"
 	echo "dangerTemp - The temperature at which if crossed, fan is activated"
 	echo "pollTime - the time in seconds to check the pi's temperature"
 	echo "outputPin - The pin that is hooked up to the power for the fan"
+	
+}
+
+#Sets up GPIO only. Used to intit the configure script
+function setupGPIO() {
+	echo "Setting up GPIO on pin $1..."
+	GPIOROOT=/sys/class/gpio
+	PINROOT=$GPIOROOT/gpio$1
+
+	## Check if Pin setup
+	if [ -d $PINROOT ]; then
+		echo "Pin $1 is set up for GPIO"
+	else
+		echo "Setting up pin $1 for GPIO..."
+		echo $1 > /sys/class/gpio/export
+		echo "Pin $1 setup for GPIO"
+	fi
+
+	#Check Pin Configuration
+	cat $PINROOT/direction | egrep -q "out"
+	DIRECTIONSET=$?
+	if [ $DIRECTIONSET -eq 0 ]; then
+		echo "Pin $1 is configured for output"
+	else
+		echo "Configureing pin $1 as Output"
+		sudo sh -c "echo 'out' > $PINROOT/direction"
+		echo "Pin $1 is configured for output"
+	fi
+	return 0
+
 }
 
 #Lets Go
 echo "BEGIN PICOOL CONFIG"
-
-if [ $# -ne 3 ]; then
+if [ $# -eq 1 ]; then
+	#Check Params
+	egrep -q "^[0-9]*$" <<< $1
+	if [ $? -ne 0 ]; then
+		usage
+		exit 1
+	fi
+	# Setu GPIO ONLY and exit success?
+	setupGPIO $1
+	exit $?
+elif [ $# -ne 3 ]; then
 	usage
 	exit 1
 fi
@@ -61,29 +101,7 @@ sed -i "s/<OUTPUTPIN>/$3/g" $TEMPLATE
 sed -i "s/<READER>/\"$READER\"/g" $TEMPLATE
 
 #Setup GPIO
-echo "Setting up GPIO on pin $3..."
-GPIOROOT=/sys/class/gpio
-PINROOT=$GPIOROOT/gpio$3
-
-## Check if Pin setup
-if [ -d $PINROOT ]; then
-	echo "Pin $3 is set up for GPIO"
-else
-	echo "Setting up pin $3 for GPIO..."
-	echo $3 > /sys/class/gpio/export
-	echo "Pin $3 setup for GPIO"
-fi
-
-#Check Pin Configuration
-cat $PINROOT/direction | egrep -q "out"
-DIRECTIONSET=$?
-if [ $DIRECTIONSET -eq 0 ]; then
-	echo "Pin $3 is configured for output"
-else
-	echo "Configureing pin $3 as Output"
-	sudo sh -c "echo 'out' > $PINROOT/direction"
-	echo "Pin $3 is configured for output"
-fi
+setupGPIO $3
 
 SERVICELOC=/etc/systemd/system
 
