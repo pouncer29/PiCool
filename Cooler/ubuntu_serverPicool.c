@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
-
+#include <signal.h>
+#include <pthread.h>
 /**
 Parameters
 */
@@ -37,7 +38,8 @@ int deactivate(){
 	return fprintf(gpio,"%i",0);
 }
 
-int main(int argc, char **argv) {
+
+void* automaticExecution(){
 	writeToLog("\nTesting Deactivate:");
 	int ret = deactivate();
 	printf("\n Deactivate Returned:%d", ret);
@@ -45,7 +47,19 @@ int main(int argc, char **argv) {
 	writeToLog("Testing Activate: ");
 	ret = activate();
 	printf("Activate Returned:%d", ret);
+	
+	return NULL;
 
-	return 0;
+}
+
+
+int main(int argc, char **argv) {
+	pthread_t* autoEx = malloc(sizeof(pthread_t));
+	int autoEx_id = pthread_create(autoEx,NULL, automaticExecution,NULL);
+	printf("Created Pthread:%d", autoEx_id);
+
+	pthread_join(*autoEx,NULL);
+
+
 }
 
