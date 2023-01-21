@@ -28,14 +28,15 @@ int writeToLog(char* msg){
 //Activate GPIO pin 18
 int activate(){
 	FILE* gpio = fopen(sysfs_root, "w+");
-	int wo = fprintf(gpio,"%i",1);
-	return wo;
+	fprintf(gpio,"%i",1);
+	return fclose(gpio);
 }
 
 //Deactivate GPIO
 int deactivate(){
 	FILE* gpio = fopen(sysfs_root, "w+");
-	return fprintf(gpio,"%i",0);
+	fprintf(gpio,"%i",0);
+	fclose(gpio);
 }
 
 
@@ -59,6 +60,7 @@ int main(int argc, char **argv) {
 	printf("Created Pthread:%d", autoEx_id);
 
 	pthread_join(*autoEx,NULL);
+	free(autoEx);
 
 
 }
