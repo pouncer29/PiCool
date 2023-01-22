@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <stdint.h>
+#include <stdlib.h>
 
 typedef struct{
 	uint8_t fan_pin;
@@ -10,7 +11,7 @@ typedef struct{
 	uint8_t active_thresh;
 } CONFIG;
 
-CONFIG* load_config();
+CONFIG* load_config(char*);
 uint8_t get_fan_pin();
 uint8_t get_poll_time();
 uint8_t get_activation_temp();

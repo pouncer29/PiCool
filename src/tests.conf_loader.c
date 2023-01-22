@@ -2,7 +2,7 @@
 #include <err.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include "conf_loader.h"
+#include <conf_loader.h>
 
 int TEST_load_config();
 //int TEST_get_fan_pin();
@@ -12,7 +12,7 @@ int TEST_load_config();
 
 
 int main(int argv, char** argc){
-	printf("This is a test");
+	printf("This is a test\n");
 	TEST_load_config();
 }
 
@@ -21,7 +21,7 @@ int main(int argv, char** argc){
 */
 int load_config_returns_CONFIG(){
 	//Load Config
-	CONFIG* my_config = load_config();
+	CONFIG* my_config = load_config("./test.picool.conf");
 
 	//Check assignment
 	assert(my_config != NULL);
@@ -39,7 +39,7 @@ int load_config_loads_values(){
 	int conf_thresh = 3;
 
 	//Load Config
-	CONFIG* my_config = load_config();
+	CONFIG* my_config = load_config("./test.picool.conf");
 
 	//Assert asssignment
 	assert(my_config->fan_pin == conf_pin);
@@ -55,20 +55,18 @@ int TEST_load_config(){
 
 	result = load_config_returns_CONFIG();
 	if(result != 0){
-		errx(result,"Config returned non-CONFIG value");
+		errx(result,"Config returned non-CONFIG value\n");
 	} else {
 		//Alert of Pass
-		printf("load_config() returns non-null -- PASSED");
+		printf("load_config() returns non-null -- PASSED\n");
 	}
 	
 	result = load_config_loads_values();
 	if(result != 0){
-		errx(result,"load_config failed to assign values");
+		errx(result,"load_config failed to assign values\n");
 	} else {
 		printf("load_config() reads/assigns values -- PASSED\n");
 	}
-
-	
 }
 /***************************************************************************/
 
