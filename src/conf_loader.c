@@ -13,26 +13,19 @@ CONFIG* load_config(char* config_path){
 	//Collect the values
 	int val = 0;
 	int count = 0;
-	char buffer[20];
 	char keyword[10];
 
 	//Look at the line of the file
-	while(fgets(buffer, sizeof(buffer),conf_file) != NULL){
-		//Grab the ints
-		if(sscanf(buffer,"%s%d",keyword,&val) != 2){
-			fprintf(stderr,"Err reading conf file: %s\n",buffer);
-			return NULL;
-		} else {
-			//Assign Values
-			if(count == 0)
-				my_config->fan_pin = val;
-			else if(count == 1)
-				my_config->poll_time = val;
-			else if(count == 2)
-				my_config->active_thresh = val;
-			
-			count++;
-		}
+	while(fscanf(conf_file,"%s%d",keyword,&val) != EOF){
+		//Assign Values
+		if(count == 0)
+			my_config->fan_pin = val;
+		else if(count == 1)
+			my_config->poll_time = val;
+		else if(count == 2)
+			my_config->active_thresh = val;
+		
+		count++;
 	}
 
 	fclose(conf_file);
