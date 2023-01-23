@@ -11,9 +11,10 @@ int TEST_load_config();
 //int TEST_get_cur_temp();
 
 
-int main(int argv, char** argc){
+int main(){
 	printf("This is a test\n");
 	TEST_load_config();
+	return 0;
 }
 
 /**
@@ -40,7 +41,6 @@ int load_config_loads_values(){
 
 	//Load Config
 	CONFIG* my_config = load_config("./test.picool.conf");
-	printf("config_pin = %d\n",my_config->fan_pin);
 
 	//Assert asssignment
 	assert(my_config->fan_pin == conf_pin);
@@ -68,6 +68,8 @@ int TEST_load_config(){
 	} else {
 		printf("load_config() reads/assigns values -- PASSED\n");
 	}
+
+	return 0;
 }
 /***************************************************************************/
 
