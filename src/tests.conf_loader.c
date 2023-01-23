@@ -40,6 +40,7 @@ int load_config_loads_values(){
 
 	//Load Config
 	CONFIG* my_config = load_config("./test.picool.conf");
+	printf("config_pin = %d\n",my_config->fan_pin);
 
 	//Assert asssignment
 	assert(my_config->fan_pin == conf_pin);

@@ -11,16 +11,22 @@ CONFIG* load_config(char* config_path){
 	FILE* conf_file = fopen(config_path,"r");
 
 	//Collect the values
-	uint8_t vals[3];
-	int val = 0;
-	while(fscanf(conf_file,"%s",vals[val])){
-		val++;
+	int* val = (int*) malloc(sizeof(int));
+	int count = 0;
+	while(fscanf(conf_file,"%d",val) == 1){
+		//Assign Values
+		if(count == 0)
+			my_config->fan_pin = (uint8_t) *val;
+		else if(count == 1)
+			my_config->poll_time = (uint8_t) *val;
+		else if(count == 2)
+			my_config->active_thresh = (uint8_t) *val;
+		
+		count++;
 	}
 
-	//Assign Values
-	my_config->fan_pin= vals[0];
-	my_config->poll_time= vals[1];
-	my_config->active_thresh= vals[2];
+	free(val);
+
 
 	return my_config;
 }
