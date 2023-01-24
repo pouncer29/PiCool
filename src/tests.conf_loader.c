@@ -12,7 +12,6 @@ int TEST_load_config();
 
 
 int main(){
-	printf("This is a test\n");
 	TEST_load_config();
 	return 0;
 }
@@ -51,6 +50,24 @@ int load_config_loads_values(){
 	return 0;
 }
 
+int load_config_ERR_on_bad_input(){
+
+	//Bad config
+	CONFIG* my_config = load_config("./bad.picool.conf");
+	assert(my_config == NULL);
+
+	//Empty Config
+	my_config = load_config("./empty.picool.conf");
+	assert(my_config == NULL);
+	
+	//File DNE
+	my_config = load_config("./Does_not_exist.picool.conf");
+	assert(my_config == NULL);
+	
+	
+	return 0;
+}
+
 int TEST_load_config(){
 	int result = 1;
 
@@ -67,6 +84,13 @@ int TEST_load_config(){
 		errx(result,"load_config failed to assign values\n");
 	} else {
 		printf("load_config() reads/assigns values -- PASSED\n");
+	}
+
+	result = load_config_ERR_on_bad_input();
+	if(result != 0){
+		errx(result,"load failed to error out on bad input");
+	} else {
+		printf("load_config() handles bad input -- PASSED\n");
 	}
 
 	return 0;

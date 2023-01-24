@@ -7,7 +7,7 @@ tests: test_conf_loader
 
 
 test_conf_loader: conf_loader.o
-	gcc $(CFLAGS) -o TEST_conf_loader tests.conf_loader.c -I. conf_loader.o
+	gcc $(CFLAGS) -o TEST_conf_loader.out tests.conf_loader.c -I. conf_loader.o
 
 conf_loader.o: conf_loader.c conf_loader.h 
 	gcc $(CFLAGS) -c conf_loader.c -I.
