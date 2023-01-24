@@ -52,10 +52,10 @@ uint8_t get_poll_time(){
 	return -1;
 }
 
-uint8_t get_active_temp(){
+float get_active_temp(){
 	return -1;
 }
 
-uint8_t get_cur_temp(){
+float get_cur_temp(){
 	return -1;
 }

@@ -36,7 +36,7 @@ int load_config_loads_values(){
 	//These Values _MUST_ match the test.picool.conf values
 	int conf_pin = 1; 
 	int conf_poll = 2;
-	int conf_thresh = 3;
+	int conf_thresh = 3.5;
 
 	//Load Config
 	CONFIG* my_config = load_config("./test_confs/test.picool.conf");

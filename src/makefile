@@ -15,5 +15,4 @@ conf_loader.o: conf_loader.c conf_loader.h
 
 clean:
 	rm *.o
-	rm *.a
 	rm *.out

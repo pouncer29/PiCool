@@ -8,14 +8,14 @@
 typedef struct{
 	uint8_t fan_pin;
 	uint8_t poll_time;
-	uint8_t active_thresh;
+	float active_thresh;
 } CONFIG;
 
 CONFIG* load_config(char*);
 uint8_t get_fan_pin();
 uint8_t get_poll_time();
-uint8_t get_activation_temp();
-uint8_t get_cur_temp();
+float get_activation_temp();
+float get_cur_temp();
 
 
 #endif
