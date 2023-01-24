@@ -21,7 +21,7 @@ int main(){
 */
 int load_config_returns_CONFIG(){
 	//Load Config
-	CONFIG* my_config = load_config("./test.picool.conf");
+	CONFIG* my_config = load_config("./test_confs/test.picool.conf");
 
 	//Check assignment
 	assert(my_config != NULL);
@@ -39,7 +39,7 @@ int load_config_loads_values(){
 	int conf_thresh = 3;
 
 	//Load Config
-	CONFIG* my_config = load_config("./test.picool.conf");
+	CONFIG* my_config = load_config("./test_confs/test.picool.conf");
 
 	//Assert asssignment
 	assert(my_config->fan_pin == conf_pin);
@@ -53,22 +53,20 @@ int load_config_loads_values(){
 int load_config_ERR_on_bad_input(){
 
 	//Bad config
-	CONFIG* my_config = load_config("./bad.picool.conf");
+	CONFIG* my_config = load_config("./test_confs/bad.picool.conf");
 	assert(my_config == NULL);
 
 	//Empty Config
-	my_config = load_config("./empty.picool.conf");
+	my_config = load_config("./test_confs/empty.picool.conf");
 	assert(my_config == NULL);
 	
 	//File DNE
-	my_config = load_config("./Does_not_exist.picool.conf");
+	my_config = load_config("./test_confs/Does_not_exist.picool.conf");
 	assert(my_config == NULL);
 	
 	
 	return 0;
-}
-
-int TEST_load_config(){
+} int TEST_load_config(){
 	int result = 1;
 
 	result = load_config_returns_CONFIG();

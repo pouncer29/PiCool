@@ -14,9 +14,20 @@ CONFIG* load_config(char* config_path){
 	int val = 0;
 	int count = 0;
 	char keyword[10];
+	int scan_ret = 0;
 
 	//Look at the line of the file
-	while(fscanf(conf_file,"%s%d",keyword,&val) != EOF){
+	do{
+		// Do Scan
+		scan_ret = fscanf(conf_file,"%s%d",keyword,&val);
+
+		//Should have ONLY key= value 2 args.
+		if(scan_ret < 2){
+			return NULL;
+		}
+
+		//TODO: evaluate keyword
+
 		//Assign Values
 		if(count == 0)
 			my_config->fan_pin = val;
@@ -26,7 +37,7 @@ CONFIG* load_config(char* config_path){
 			my_config->active_thresh = val;
 		
 		count++;
-	}
+	} while (scan_ret != EOF);
 
 	fclose(conf_file);
 
