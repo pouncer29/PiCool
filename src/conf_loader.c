@@ -11,33 +11,34 @@ CONFIG* load_config(char* config_path){
 	FILE* conf_file = fopen(config_path,"r");
 
 	//Collect the values
-	int val = 0;
 	int count = 0;
-	char keyword[10];
 	int scan_ret = 0;
+	char conf_line[20];
 
 	//Look at the line of the file
-	do{
-		// Do Scan
-		scan_ret = fscanf(conf_file,"%s%d",keyword,&val);
+	while(fgets(conf_line,20,conf_file) != NULL){
+			
+		char keyword[10]; //Buffer for the keyword only
+		char* value; //Buffer for the keyword only
+		int pin_num = 0;
+		int poll_time = 0;
+		float active_thresh  = 0.0f;
+	
+		//Pull out it's keyword
+		scan_ret = sscanf(conf_line,"%s",keyword);
+		if(scan_ret > 1){
+			return NULL;
+		}
+		value = strchr(conf_line,' ') + 1; //Get everything after the =
 
-		//Should have ONLY key= value 2 args.
-		if(scan_ret < 2){
+		if(strcmp(keyword,"FAN_PIN=") == 0){
+			return NULL;
+		} else {
 			return NULL;
 		}
 
 		//TODO: evaluate keyword
-
-		//Assign Values
-		if(count == 0)
-			my_config->fan_pin = val;
-		else if(count == 1)
-			my_config->poll_time = val;
-		else if(count == 2)
-			my_config->active_thresh = val;
-		
-		count++;
-	} while (scan_ret != EOF);
+	}
 
 	fclose(conf_file);
 
