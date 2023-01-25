@@ -47,7 +47,7 @@ CONFIG* load_config(char* config_path){
 			sscanf(value,"%f",&(my_config->active_thresh));
 		} else {
 			char* err_msg = strcat("Unrecognized value: ",keyword);
-			errx(1, strecat(err_msg,"\n");
+			errx(1, strcat(err_msg,"\n"));
 			return NULL;
 		}
 	}

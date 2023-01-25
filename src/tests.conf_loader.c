@@ -34,9 +34,9 @@ int load_config_returns_CONFIG(){
 
 int load_config_loads_values(){
 	//These Values _MUST_ match the test.picool.conf values
-	int conf_pin = 1; 
-	int conf_poll = 2;
-	int conf_thresh = 3.5;
+	int conf_pin = 23; 
+	int conf_poll = 5;
+	float conf_thresh = 3.5f;
 
 	//Load Config
 	CONFIG* my_config = load_config("./test_confs/test.picool.conf");
@@ -55,18 +55,36 @@ int load_config_ERR_on_bad_input(){
 	//Bad config
 	CONFIG* my_config = load_config("./test_confs/bad.picool.conf");
 	assert(my_config == NULL);
+	return 0;
+}
+
+int load_config_ERR_on_invalid_input(){
 
 	//Empty Config
-	my_config = load_config("./test_confs/empty.picool.conf");
+	my_config = load_config("./test_confs/invalid.picool.conf");
 	assert(my_config == NULL);
 	
+	return 0;
+}
+
+int load_config_ERR_on_non_existing_file(){
 	//File DNE
 	my_config = load_config("./test_confs/Does_not_exist.picool.conf");
 	assert(my_config == NULL);
-	
-	
+
 	return 0;
-} int TEST_load_config(){
+} 
+
+int load_config_ERR_on_empty_file(){
+	//File DNE
+	my_config = load_config("./test_confs/empty.picool.conf");
+	assert(my_config == NULL);
+
+	return 0;
+} 
+
+
+int TEST_load_config(){
 	int result = 1;
 
 	result = load_config_returns_CONFIG();
