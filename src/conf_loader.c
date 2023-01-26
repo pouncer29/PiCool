@@ -9,6 +9,13 @@ CONFIG* load_config(char* config_path){
 
 	//Open the file	
 	FILE* conf_file = fopen(config_path,"r");
+	
+	if(conf_file == NULL){
+		fprintf(stderr,"CONF FILE \"%s\" NOT FOUND.\n",config_path);
+		return NULL;
+	}
+
+	
 
 	//Collect the values
 	int scan_ret = 0; 		//Allows us to examine the scan return.
@@ -29,7 +36,10 @@ CONFIG* load_config(char* config_path){
 
 		//check keyword len
 		if(strlen(keyword) >= MAX_KEYWORD_LEN){
-			errx(1,strcat("MAX KEYWORD LEN EXCEEDED: \n",keyword));
+			errx(1,strcat(
+				"INVALID CONF FILE: MAX KEYWORD LEN EXCEEDED:\n"
+				,keyword)
+			);
 			return NULL;
 		}	
 
@@ -56,7 +66,7 @@ CONFIG* load_config(char* config_path){
 	fclose(conf_file);
 
 	if(validate_config(my_config) > 0){
-		errx(2,"INVALID CONF FILE\n");
+		fprintf(stderr,"INVALID CONF FILE\n");
 		return NULL;
 	}
 

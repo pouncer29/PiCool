@@ -51,7 +51,7 @@ int load_config_loads_values(){
 }
 
 int load_config_ERR_on_bad_input(){
-
+	
 	//Bad config
 	CONFIG* my_config = load_config("./test_confs/bad.picool.conf");
 	assert(my_config == NULL);
@@ -61,24 +61,27 @@ int load_config_ERR_on_bad_input(){
 int load_config_ERR_on_invalid_input(){
 
 	//Empty Config
-	my_config = load_config("./test_confs/invalid.picool.conf");
+	CONFIG* my_config = load_config("./test_confs/invalid.picool.conf");
 	assert(my_config == NULL);
-	
+	free(my_config);
+
 	return 0;
 }
 
 int load_config_ERR_on_non_existing_file(){
 	//File DNE
-	my_config = load_config("./test_confs/Does_not_exist.picool.conf");
+	CONFIG* my_config = load_config("./test_confs/Does_not_exist.picool.conf");
 	assert(my_config == NULL);
+	free(my_config);
 
 	return 0;
 } 
 
 int load_config_ERR_on_empty_file(){
 	//File DNE
-	my_config = load_config("./test_confs/empty.picool.conf");
+	CONFIG* my_config = load_config("./test_confs/empty.picool.conf");
 	assert(my_config == NULL);
+	free(my_config);
 
 	return 0;
 } 
@@ -87,6 +90,7 @@ int load_config_ERR_on_empty_file(){
 int TEST_load_config(){
 	int result = 1;
 
+	//CONFIG can be loaded
 	result = load_config_returns_CONFIG();
 	if(result != 0){
 		errx(result,"Config returned non-CONFIG value\n");
@@ -95,6 +99,7 @@ int TEST_load_config(){
 		printf("load_config() returns non-null -- PASSED\n");
 	}
 	
+	//Config Loads Values
 	result = load_config_loads_values();
 	if(result != 0){
 		errx(result,"load_config failed to assign values\n");
@@ -102,12 +107,41 @@ int TEST_load_config(){
 		printf("load_config() reads/assigns values -- PASSED\n");
 	}
 
+	//NULL & ERRMSG on bad config
 	result = load_config_ERR_on_bad_input();
 	if(result != 0){
 		errx(result,"load failed to error out on bad input");
 	} else {
 		printf("load_config() handles bad input -- PASSED\n");
 	}
+
+	//NULL & ERRMSG on invalid config
+	result = load_config_ERR_on_invalid_input();
+	if(result != 0){
+		errx(result,"load failed to error out on invalid input\n");
+	} else {
+		printf("load_config() handles invalid input -- PASSED\n");
+	}
+
+
+	//NULL & ERRMSG on Non-existent Config
+	result = load_config_ERR_on_non_existing_file();
+	if(result != 0){
+		errx(result,"load failed to error out on non-existent file\n");
+	} else {
+		printf("load_config() handles non-existent file -- PASSED\n");
+	}
+	
+	//NULL & ERRMSG on empty Config
+	result = load_config_ERR_on_empty_file();
+	if(result != 0){
+		errx(result,"load failed to error out on empty input");
+	} else {
+		printf("load_config() handles empty conf_file -- PASSED\n");
+	}
+
+
+
 
 	return 0;
 }
