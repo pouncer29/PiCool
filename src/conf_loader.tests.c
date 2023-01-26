@@ -5,14 +5,48 @@
 #include <conf_loader.h>
 
 int TEST_load_config();
-//int TEST_get_fan_pin();
+int TEST_getters();
 //int TEST_get_poll_time();
 //int TEST_get_activation_temp();
 //int TEST_get_cur_temp();
 
 
 int main(){
+	TEST_getters();
 	TEST_load_config();
+	return 0;
+}
+
+/**
+ * Getter Tests
+ */
+
+
+int get_fan_pin_fetches_properly(){
+	uint8_t expected = 23;
+	uint8_t actual = get_fan_pin();
+
+	if(expected != actual){
+		return actual;
+	}
+
+	return 0;
+}
+
+/** TEST GETTERS*/
+int TEST_getters(){
+	int result = 1;
+
+	
+	result = get_fan_pin_fetches_properly();
+
+	if(result != 0){
+		errx(result,"FAILED -- Expected 23, actual %d\n", result);
+	} else {
+		//Alert of Pass
+		printf("get_fan_pin() gets proper value -- PASSED\n");
+	}
+	
 	return 0;
 }
 

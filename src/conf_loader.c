@@ -121,17 +121,17 @@ uint8_t validate_config(CONFIG* validate_me){
 }
 
 uint8_t get_fan_pin(){
-	return -1;
+	return VAL_MAX;
 }
 
 uint8_t get_poll_time(){
-	return -1;
+	return VAL_MAX;
 }
 
 float get_active_temp(){
-	return -1;
+	return -1.0f;
 }
 
 float get_cur_temp(){
-	return -1;
+	return -1.0f;
 }

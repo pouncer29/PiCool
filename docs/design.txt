@@ -68,6 +68,11 @@ d) get_cur_temp()
 	params: none
 	return: current temperature as an integer
 
+e) load_config(file)
+	info: Loads the configuration file into a structure
+	params: file - the path to the config file
+	return: a new config_file to operate on.
+
 
 2.2 Fan_Control
 ----------------
