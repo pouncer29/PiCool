@@ -51,6 +51,35 @@ int get_fan_pin_default_set(){
 
 
 
+/**
+ * Tests that poll_time is fetched from config properly
+ * return: 0 on success, <RESULT_NUM> on error
+ */
+int get_poll_time_fetches_properly(){
+	uint8_t expected = 5;
+	uint8_t actual = get_poll_time();
+
+	if(expected != actual){
+		return actual;
+	}
+	return 0;
+}
+
+/*
+ * Tests that an unset POLL_TIME results in default 60 seconds
+ * return: 0 on success, <RESULT_NUM> on error
+ */
+int get_poll_time_default_set(){
+	uint8_t expected = 60;
+	uint8_t actual = get_poll_time();
+	
+	if(expected != actual){
+		return actual;
+	}
+	return 0;
+}
+
+
 /** TEST GETTERS*/
 int TEST_getters(){
 	int result = 1;
@@ -68,16 +97,34 @@ int TEST_getters(){
 	}
 
 	
-	//TEST BASIC USE CASE: PIN # SET PROPERLY
+	//TEST BASIC USE CASE: POLL_TIME # SET PROPERLY
 	result = get_fan_pin_fetches_properly();
 
 	if(result != 0){
-		errx(result,"FAILED -- Expected 23, actual %d\n", result);
+		errx(result,"FAILED -- Expected 28, actual %d\n", result);
 	} else {
-		//Alert of Pass
-		printf("get_fan_pin() gets proper value -- PASSED\n");
+		printf("get_poll_time() gets proper value -- PASSED\n");
 	}
 	
+	result = get_poll_time_default_set();
+
+	if(result != 0){
+		errx(result,"FAILED -- Expected default (60), actual %d\n", 
+			result);
+	} else {
+		printf("get_poll_time() sets default in default case -- PASSED\n");
+	}
+
+	
+	//TEST DEFAULT SET for get_
+	result = get_poll_time_fetches_properly();
+
+	if(result != 0){
+		errx(result,"FAILED -- Expected 5, actual %d\n", result);
+	} else {
+		printf("get_poll_time() gets proper value -- PASSED\n");
+	}
+
 	return 0;
 }
 
