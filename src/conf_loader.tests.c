@@ -167,7 +167,7 @@ int TEST_load_config(){
 	//Config Loads Values
 	result = load_config_loads_values();
 	if(result != 0){
-		errx(result,"load_config failed to assign values\n");
+		errx(result,"FAILED -- load_config failed to assign values\n");
 	} else {
 		printf("load_config() reads/assigns values -- PASSED\n");
 	}
