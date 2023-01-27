@@ -21,7 +21,10 @@ int main(){
  * Getter Tests
  */
 
-
+/**
+ * Tests the regualar use case. Fan pin in range
+ * return: 0 on success, <RESULT_NUM> on error
+ */
 int get_fan_pin_fetches_properly(){
 	uint8_t expected = 23;
 	uint8_t actual = get_fan_pin();
@@ -29,15 +32,43 @@ int get_fan_pin_fetches_properly(){
 	if(expected != actual){
 		return actual;
 	}
-
 	return 0;
 }
+
+/**
+ * Tests that an unset FAN_PIN results in default 23
+ * return: 0 on success, <RESULT_NUM> on error
+ */
+int get_fan_pin_default_set(){
+	uint8_t expected = 23;
+	uint8_t actual = get_fan_pin();
+	
+	if(expected != actual){
+		return actual;
+	}
+	return 0;
+}
+
+
 
 /** TEST GETTERS*/
 int TEST_getters(){
 	int result = 1;
 
+
+	//TEST DEFAULT SET ON NO CONFIG PROVIDED
+	result = get_fan_pin_default_set();
+
+	if(result != 0){
+		errx(result,"FAILED -- Expected default (23), actual %d\n", 
+			result);
+	} else {
+		//Alert of Pass
+		printf("get_fan_pin() sets default in default case -- PASSED\n");
+	}
+
 	
+	//TEST BASIC USE CASE: PIN # SET PROPERLY
 	result = get_fan_pin_fetches_properly();
 
 	if(result != 0){
