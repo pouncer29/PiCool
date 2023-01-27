@@ -72,7 +72,7 @@ int get_poll_time_fetches_properly(){
 int get_poll_time_default_set(){
 	uint8_t expected = 60;
 	uint8_t actual = get_poll_time();
-	
+
 	if(expected != actual){
 		return actual;
 	}
@@ -105,17 +105,17 @@ int TEST_getters(){
 	} else {
 		printf("get_poll_time() gets proper value -- PASSED\n");
 	}
-	
+
 	result = get_poll_time_default_set();
 
 	if(result != 0){
-		errx(result,"FAILED -- Expected default (60), actual %d\n", 
+		errx(result,"FAILED -- Expected default (60), actual %d\n",
 			result);
 	} else {
 		printf("get_poll_time() sets default in default case -- PASSED\n");
 	}
 
-	
+
 	//TEST DEFAULT SET for get_
 	result = get_poll_time_fetches_properly();
 
@@ -214,7 +214,7 @@ int TEST_load_config(){
 	//Config Loads Values
 	result = load_config_loads_values();
 	if(result != 0){
-		errx(result,"load_config() failed to assign values\n");
+		errx(result,"FAILED -- load_config failed to assign values\n");
 	} else {
 		printf("load_config() reads/assigns values -- PASSED\n");
 	}
