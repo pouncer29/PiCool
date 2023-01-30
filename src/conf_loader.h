@@ -15,7 +15,8 @@ typedef struct{
 	float active_thresh;
 } CONFIG;
 
-CONFIG* load_config(char*);
+CONFIG* get_config(char*);
+int unload_config();
 uint8_t validate_config(CONFIG*);
 uint8_t get_fan_pin();
 uint8_t get_poll_time();

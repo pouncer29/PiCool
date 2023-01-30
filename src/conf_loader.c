@@ -52,43 +52,82 @@ int assign_values(char* conf_line, CONFIG* my_config){
  * Synopsis: Reads the config file and assigns values to a newly created 
  * 	     config file
  * Preconditions: conf_file passed exists
- * Postconditions: New config struct is created and assigned values
+ * Postconditions: CONFIG* fan_config struct is malloced, & assigned values
  * Return: Pointer to a new config object
  */
-CONFIG* load_config(char* config_path){
+int load_config(char* config_path){
 
 	//Load up a new config struct
-	CONFIG* my_config = (CONFIG*) malloc(sizeof(CONFIG));
+	fan_config = (CONFIG*) malloc(sizeof(CONFIG));
 
-	//TODO: Assign Default values maybe?
+	//Assign Default values
+	fan_config->fan_pin = 23;
+	fan_config->poll_time=60;
+	fan_config->active_thresh=65.0f;	
 
 	//Open the file	
 	FILE* conf_file = fopen(config_path,"r");
 	
 	if(conf_file == NULL){
 		fprintf(stderr,"CONF FILE \"%s\" NOT FOUND.\n",config_path);
-		return NULL;
+		return 1;
 	}
 
 	char conf_line[20];		//Holds a full line of input
 
 	//Loop through file, and assign values
 	while(fgets(conf_line,20,conf_file) != NULL){
-		if(assign_values(conf_line,my_config) != 0){
-			return NULL;
+		if(assign_values(conf_line,fan_config) != 0){
+			fprintf(stderr,"Error assigning conf values: %s",config_path);
+			return 2;
 		}
 	}
 
 	//Close the file
 	fclose(conf_file);
 
-	if(validate_config(my_config) > 0){
+	if(validate_config(fan_config) > 0){
 		fprintf(stderr,"INVALID CONF FILE\n");
-		return NULL;
+		return 3;
 	}
 
-	//my_config must now contain all that it had.
-	return my_config;
+	//fan_config must now have values, or be invalid/null
+	return 0;
+}
+
+
+//TODO: test
+int unload_config(){
+	if(fan_config != NULL)
+		free(fan_config);
+	else
+		return 1;
+
+	return 0;
+}
+
+/**
+ * Provides singleton like access to the config
+ */
+CONFIG* get_config(char* config_path){
+
+	//If we were not given a config path, check to see if conf is loaded
+	//if conf is loaded, return it
+	if(config_path == NULL && fan_config != NULL){
+		return fan_config;
+	} else {
+		//Otherwise load it 
+		int did_load = load_config(config_path);
+
+		//Check to see if return is OK or defaults assigned (NOT NULL)
+		if(did_load != 0 || fan_config != NULL)
+			return fan_config;
+		else{
+			fprintf(stderr,"FAILED TO GET CONFIG FILE %s",
+				config_path);
+			return NULL;
+		}
+	}
 }
 
 /**
@@ -121,14 +160,14 @@ uint8_t validate_config(CONFIG* validate_me){
 }
 
 uint8_t get_fan_pin(){
-	return VAL_MAX;
+	return fan_config->fan_pin;	
 }
 
 uint8_t get_poll_time(){
 	return VAL_MAX;
 }
 
-float get_active_temp(){
+float get_activation_temp(){
 	return -1.0f;
 }
 
