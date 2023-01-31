@@ -60,7 +60,7 @@ int get_fan_pin_default_set(){
 
 
 	//INVALID case
-	get_config("./test_confs/empty.picool.conf");
+	get_config("./test_confs/invalid.picool.conf");
 	actual = get_fan_pin();
 	if(expected != actual){
 		return actual;
@@ -86,6 +86,7 @@ int get_fan_pin_default_set(){
  * return: 0 on success, <RESULT_NUM> on error
  */
 int get_poll_time_fetches_properly(){
+	get_config("./test_confs/test.picool.conf");
 	uint8_t expected = 5;
 	uint8_t actual = get_poll_time();
 
@@ -100,12 +101,35 @@ int get_poll_time_fetches_properly(){
  * return: 0 on success, <RESULT_NUM> on error
  */
 int get_poll_time_default_set(){
+
+	//Empty Case
+	get_config("./test_confs/empty.picool.conf");
 	uint8_t expected = 60;
 	uint8_t actual = get_poll_time();
 	
 	if(expected != actual){
 		return actual;
 	}
+
+
+
+	//INVALID case
+	get_config("./test_confs/invalid.picool.conf");
+	actual = get_poll_time();
+	if(expected != actual){
+		return actual;
+	}
+
+
+	//DNE case
+	get_config("./test_confs/DNE.picool.conf");
+	actual = get_poll_time();
+	if(expected != actual){
+		return actual;
+	}
+
+	unload_config();
+
 	return 0;
 }
 

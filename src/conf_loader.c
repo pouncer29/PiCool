@@ -164,7 +164,7 @@ uint8_t get_fan_pin(){
 }
 
 uint8_t get_poll_time(){
-	return VAL_MAX;
+	return fan_config->poll_time;
 }
 
 float get_activation_temp(){
