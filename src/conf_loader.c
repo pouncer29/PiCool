@@ -61,9 +61,9 @@ int load_config(char* config_path){
 	fan_config = (CONFIG*) malloc(sizeof(CONFIG));
 
 	//Assign Default values
-	fan_config->fan_pin = 23;
-	fan_config->poll_time=60;
-	fan_config->active_thresh=65.0f;	
+	fan_config->fan_pin = DEFAULT_FAN_PIN;
+	fan_config->poll_time = DEFAULT_POLL_TIME;
+	fan_config->active_thresh = DEFAULT_ACTIVE_TEMP;	
 
 	//Open the file	
 	FILE* conf_file = fopen(config_path,"r");

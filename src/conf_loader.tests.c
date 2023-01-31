@@ -4,11 +4,9 @@
 #include <stdio.h>
 #include <conf_loader.h>
 
+//Test Stubs
 int TEST_get_config();
 int TEST_getters();
-//int TEST_get_poll_time();
-//int TEST_get_activation_temp();
-//int TEST_get_cur_temp();
 
 
 int main(){
@@ -50,7 +48,7 @@ int get_fan_pin_default_set(){
 
 	//Empty Case
 	get_config("./test_confs/empty.picool.conf");
-	uint8_t expected = 23;
+	uint8_t expected = DEFAULT_FAN_PIN;
 	uint8_t actual = get_fan_pin();
 	
 	if(expected != actual){
@@ -106,7 +104,7 @@ int get_poll_time_default_set(){
 
 	//Empty Case
 	get_config("./test_confs/empty.picool.conf");
-	uint8_t expected = 60;
+	uint8_t expected = DEFAULT_POLL_TIME;
 	uint8_t actual = get_poll_time();
 	
 	if(expected != actual){
@@ -161,7 +159,7 @@ int get_active_thresh_default_set(){
 
 	//Empty Case
 	get_config("./test_confs/empty.picool.conf");
-	float expected = 65.0f;
+	float expected = DEFAULT_ACTIVE_TEMP;
 	float actual = get_activation_temp();
 	
 	if(expected != actual){
@@ -200,8 +198,8 @@ int TEST_getters(){
 	result = get_fan_pin_default_set();
 
 	if(result != 0){
-		errx(result,"FAILED -- get_fan_pin() Expected default (23), actual %d\n", 
-			result);
+		errx(result,"FAILED -- get_fan_pin() Expected default (%d), actual %d\n", 
+			DEFAULT_FAN_PIN,result);
 	} else {
 		//Alert of Pass
 		printf("get_fan_pin() sets default in default case -- PASSED\n");
@@ -223,8 +221,8 @@ int TEST_getters(){
 	result = get_poll_time_default_set();
 
 	if(result != 0){
-		errx(result,"FAILED -- get_poll_time() Expected default (60), actual %d\n", 
-			result);
+		errx(result,"FAILED -- get_poll_time() Expected default (%d), actual %d\n", 
+			DEFAULT_POLL_TIME,result);
 	} else {
 		printf("get_poll_time() sets default in default case -- PASSED\n");
 	}
@@ -241,8 +239,8 @@ int TEST_getters(){
 	result = get_active_thresh_default_set();
 
 	if(result != 0){
-		errx(result,"FAILED -- get_activation_temp() Expected default (65.0), actual %d\n", 
-			result);
+		errx(result,"FAILED -- get_activation_temp() Expected default (%f), actual %d\n", 
+			DEFAULT_ACTIVE_TEMP,result);
 	} else {
 		printf("get_active_thresh() sets default in default case -- PASSED\n");
 	}

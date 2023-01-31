@@ -6,8 +6,14 @@
 #include <stdlib.h>
 #include <string.h>
 #include <err.h>
+//Boundaries
 #define VAL_MAX 255
 #define MAX_KEYWORD_LEN 15
+
+//Defaults
+#define DEFAULT_FAN_PIN 23
+#define DEFAULT_POLL_TIME 60
+#define DEFAULT_ACTIVE_TEMP 65.5f
 
 typedef struct{
 	uint8_t fan_pin;
