@@ -93,6 +93,8 @@ int get_poll_time_fetches_properly(){
 	if(expected != actual){
 		return actual;
 	}
+
+	unload_config();
 	return 0;
 }
 
@@ -138,12 +140,15 @@ int get_poll_time_default_set(){
  * return: 0 on success, <RESULT_NUM> on error
  */
 int get_active_thresh_fetches_properly(){
+	get_config("./test_confs/test.picool.conf");
 	float expected = 5.5f;
 	float actual = get_activation_temp();
 
 	if(expected != actual){
 		return actual;
 	}
+
+	unload_config();
 	return 0;
 }
 
@@ -152,12 +157,36 @@ int get_active_thresh_fetches_properly(){
  * return: 0 on success, <RESULT_NUM> on error
  */
 int get_active_thresh_default_set(){
+
+
+	//Empty Case
+	get_config("./test_confs/empty.picool.conf");
 	float expected = 65.0f;
 	float actual = get_activation_temp();
 	
 	if(expected != actual){
 		return actual;
 	}
+
+
+
+	//INVALID case
+	get_config("./test_confs/invalid.picool.conf");
+	actual = get_activation_temp();
+	if(expected != actual){
+		return actual;
+	}
+
+
+	//DNE case
+	get_config("./test_confs/DNE.picool.conf");
+	actual = get_activation_temp();
+	if(expected != actual){
+		return actual;
+	}
+
+	unload_config();
+
 	return 0;
 }
 
@@ -249,9 +278,9 @@ int get_config_returns_CONFIG(){
 
 int get_config_loads_values(){
 	//These Values _MUST_ match the test.picool.conf values
-	int conf_pin = 23; 
+	int conf_pin = 28; 
 	int conf_poll = 5;
-	float conf_thresh = 3.5f;
+	float conf_thresh = 5.5f;
 
 	//Load Config
 	CONFIG* my_config = get_config("./test_confs/test.picool.conf");
@@ -269,7 +298,7 @@ int get_config_ERR_on_bad_input(){
 	
 	//Bad config
 	CONFIG* my_config = get_config("./test_confs/bad.picool.conf");
-	assert(my_config == NULL);
+	assert(my_config != NULL);
 	return 0;
 }
 
@@ -277,7 +306,7 @@ int get_config_ERR_on_invalid_input(){
 
 	//Empty Config
 	CONFIG* my_config = get_config("./test_confs/invalid.picool.conf");
-	assert(my_config == NULL);
+	assert(my_config != NULL);
 	free(my_config);
 
 	return 0;
@@ -286,7 +315,7 @@ int get_config_ERR_on_invalid_input(){
 int get_config_ERR_on_non_existing_file(){
 	//File DNE
 	CONFIG* my_config = get_config("./test_confs/Does_not_exist.picool.conf");
-	assert(my_config == NULL);
+	assert(my_config != NULL);
 	free(my_config);
 
 	return 0;
@@ -295,7 +324,7 @@ int get_config_ERR_on_non_existing_file(){
 int get_config_ERR_on_empty_file(){
 	//File DNE
 	CONFIG* my_config = get_config("./test_confs/empty.picool.conf");
-	assert(my_config == NULL);
+	assert(my_config != NULL);
 	free(my_config);
 
 	return 0;
