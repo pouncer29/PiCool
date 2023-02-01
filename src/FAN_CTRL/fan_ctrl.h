@@ -31,14 +31,15 @@ d) get_GPIO_path();
 	return: char* the path to the GPIO file
 */
 
-#ifndef CONF_LOADER
-#define CONF_LOADER
+#ifndef FAN_CONFIG
+#define FAN_CONFIG
 
 #include <conf_loader.h>
 
-#define GPIO_ROOT "/sys/class/gpio"
 #ifndef DEBUG //If we are debugging, don't use the real deal.
 	#define GPIO_ROOT "../../tests/test_gpio"
+#else
+	#define GPIO_ROOT "/sys/class/gpio"
 #endif
 
 
