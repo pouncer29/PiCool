@@ -62,7 +62,7 @@ c) get_active_temp()
 		params: none
 		return: Activation threshold in degrees celcius
 
-d) get_cur_temp()
+d) get_cur_temp() TODO: THIS ONE
 	info: Uses the native temperature reading functions of the system to grab 
           the temperature and returns it as an integer.
 	params: none
