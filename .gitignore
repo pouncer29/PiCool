@@ -13,4 +13,4 @@ __pycache__/
 
 #generated files
 Cooler/piCool.py
-tests/
+tests/*.out
