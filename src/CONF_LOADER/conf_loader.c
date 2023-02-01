@@ -96,7 +96,9 @@ int load_config(char* config_path){
 }
 
 
-//TODO: test
+/**
+ * Frees the global "fan_config"
+ */
 int unload_config(){
 	if(fan_config != NULL)
 		free(fan_config);

@@ -1,18 +1,15 @@
-all: conf_loader, tests
-.PHONEY: clean
+export CFLAGS := -g -Wall -Wextra 
+export SRC := $(shell pwd)
+export ROOT_DIR := $(SRC)/..
+export CONFIG_DIR := $(SRC)/CONF_LOADER
 
-CFLAGS= -g -Wall -Wextra 
+all: start conf_loader
 
-tests: test_conf_loader
+.PHONEY: all start conf_loader
 
+start:
+	@echo "STATING"
 
-test_conf_loader: conf_loader.o
-	gcc $(CFLAGS) -o TEST_conf_loader.out conf_loader.tests.c -I. conf_loader.o
-
-conf_loader.o: conf_loader.c conf_loader.h 
-	gcc $(CFLAGS) -c conf_loader.c -I.
-
-
-clean:
-	rm *.o
-	rm *.out
+conf_loader: 
+	@echo "******************** MAKING CONF_LOADER ************************"
+	$(MAKE) -C $(CONFIG_DIR)
