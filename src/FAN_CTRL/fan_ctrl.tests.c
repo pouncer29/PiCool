@@ -7,13 +7,14 @@
 #include <string.h>
 
 
+
 int get_gpio_path_gets_correct_path(){
 
 	//set_expectations
-	char* expected = (char*) malloc(strlen("/gpio/gpio28") + \
+	char* expected = (char*) malloc(strlen("/gpio28") + \
 		strlen(GPIO_ROOT));
 	strcat(expected,GPIO_ROOT); //provide the ../../tests/test_gpio
-	strcat(expected,"/gpio/gpio28"); //provide the full path
+	strcat(expected,"/gpio28"); //provide the full path
 
 	char* result = get_GPIO_path();
 
@@ -22,23 +23,43 @@ int get_gpio_path_gets_correct_path(){
 			expected,result);
 		return 1;
 	}
+
+	free(expected);
 	return 0;
 }
 
+
+int gpio_path_plus_constructs_path(){
+
+	//Set expectations
+	char* test_path= "ADDITION";
+	char* expected = (char*) malloc(strlen(test_path) + strlen(GPIO_ROOT));
+	strcat(expected,GPIO_ROOT);
+	strcat(expected,test_path);
+
+	//Get the path
+	char* result = GPIO_path_plus(test_path);
+
+	//Check results
+	if(strcmp(expected,result) != 0){
+		printf("GPIO_path_plus() expected \"%s\", got \"%s\"\n",
+			expected,result);
+		return 1;
+	}
+
+	//Freee the var
+	free(expected);
+
+	return 0;
+}
+
+
 /*
-	write pin# to /sys/class/gpio/export (to initialize)
-	write 'out' to /sys/class/gpio/gpio<PIN#>/direction (to set output)
+ write pin# to /sys/class/gpio/export (to initialize)
+ write 'out' to /sys/class/gpio/gpio<PIN#>/direction (to set output)
 */
 int init_gpio_initializes_proper_files(){
-	//Check that /gpio/export contains 'pin#'
-
-	int result = initialize_GPIO();
-
-
-	//check that /gpio contains /gpio/gpiopin# contains 'out'
-
-return 1;
-	
+	return 1;
 }
 
 int init_gpio_writes_to_appropriate_file(){
@@ -56,7 +77,17 @@ void TEST_gpio_init(){
 		errx(result,"FAILED -- Fetched path was incorrect\n");
 	} else {
 		//Alert of Pass
-		printf("get_gpio_path() returns correct path -- PASSED\n");
+		printf("get_GPIO_path() returns correct path -- PASSED\n");
+	}
+
+
+	//Path Constructor constructs paths
+	result = gpio_path_plus_constructs_path();
+	if(result != 0){
+		errx(result,"FAILED -- constructed path was incorrect\n");
+	} else {
+		//Alert of Pass
+		printf("GPIO_path_plus() returns correct path -- PASSED\n");
 	}
 
 }

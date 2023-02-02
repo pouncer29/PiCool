@@ -16,3 +16,6 @@ char* get_GPIO_path(){
 	return "IMPLEMENT ME";
 }
 
+char* GPIO_path_plus(char* path){
+	return "IMPLEMENT ME";
+}

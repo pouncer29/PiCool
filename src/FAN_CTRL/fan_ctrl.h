@@ -37,7 +37,7 @@ d) get_GPIO_path();
 #include <conf_loader.h>
 
 #ifdef TEST //If we are TESTING, don't use the real deal.
-	#define GPIO_ROOT "../../tests/test_gpio"
+	#define GPIO_ROOT "../../tests/gpio"
 #else
 	#define GPIO_ROOT "/sys/class/gpio"
 #endif
@@ -49,5 +49,6 @@ uint8_t initialize_GPIO();
 uint8_t activate_fan();
 uint8_t deactivate_fan();
 char* get_GPIO_path();
+char* GPIO_path_plus(char*);
 
 #endif
