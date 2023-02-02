@@ -5,6 +5,7 @@ all: fan_ctrl.o test_fan_ctrl
 test_fan_ctrl: fan_ctrl.o
 	@echo "MAKING FAN_CTRL TESTS"
 	gcc $(CFLAGS) -o TEST_FAN_CTRL.out \
+	-DTEST \
 	fan_ctrl.tests.c \
 	-I$(FAN_CTRL_DIR) -I$(CONFIG_DIR) \
 	fan_ctrl.o

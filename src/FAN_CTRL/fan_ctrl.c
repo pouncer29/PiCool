@@ -13,6 +13,6 @@ uint8_t deactivate_fan(){
 }
 
 char* get_GPIO_path(){
-	return NULL;
+	return "IMPLEMENT ME";
 }
 

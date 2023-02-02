@@ -36,7 +36,7 @@ d) get_GPIO_path();
 
 #include <conf_loader.h>
 
-#ifndef DEBUG //If we are debugging, don't use the real deal.
+#ifdef TEST //If we are TESTING, don't use the real deal.
 	#define GPIO_ROOT "../../tests/test_gpio"
 #else
 	#define GPIO_ROOT "/sys/class/gpio"
