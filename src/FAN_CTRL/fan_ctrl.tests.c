@@ -25,8 +25,20 @@ int get_gpio_path_gets_correct_path(){
 	return 0;
 }
 
-int init_gpio_fetches_config(){
-	return 1;
+/*
+	write pin# to /sys/class/gpio/export (to initialize)
+	write 'out' to /sys/class/gpio/gpio<PIN#>/direction (to set output)
+*/
+int init_gpio_initializes_proper_files(){
+	//Check that /gpio/export contains 'pin#'
+
+	int result = initialize_GPIO();
+
+
+	//check that /gpio contains /gpio/gpiopin# contains 'out'
+
+return 1;
+	
 }
 
 int init_gpio_writes_to_appropriate_file(){
