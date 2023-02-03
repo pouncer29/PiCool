@@ -1,4 +1,4 @@
-export CFLAGS := -g -Wall -Wextra 
+export CFLAGS := -g -Wall -Wextra -DTEST
 export SRC := $(shell pwd)
 export ROOT_DIR := $(SRC)/..
 export CONFIG_DIR := $(SRC)/CONF_LOADER

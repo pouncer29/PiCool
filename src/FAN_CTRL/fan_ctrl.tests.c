@@ -33,7 +33,10 @@ int gpio_path_plus_constructs_path(){
 
 	//Set expectations
 	char* test_path= "ADDITION";
-	char* expected = (char*) malloc(strlen(test_path) + strlen(GPIO_ROOT));
+	char* expected = NULL;
+	expected = (char*) malloc(strlen(test_path) + strlen(GPIO_ROOT) + 1);
+
+	//Construct expectations
 	strcat(expected,GPIO_ROOT);
 	strcat(expected,test_path);
 
@@ -71,6 +74,15 @@ int init_gpio_writes_to_appropriate_file(){
 void TEST_gpio_init(){
 	int result = 1;
 
+	//Path Constructor constructs paths
+	result = gpio_path_plus_constructs_path();
+	if(result != 0){
+		errx(result,"FAILED -- constructed path was incorrect\n");
+	} else {
+		//Alert of Pass
+		printf("GPIO_path_plus() returns correct path -- PASSED\n");
+	}
+
 	//GPIO path is fetched
 	result = get_gpio_path_gets_correct_path();
 	if(result != 0){
@@ -81,14 +93,7 @@ void TEST_gpio_init(){
 	}
 
 
-	//Path Constructor constructs paths
-	result = gpio_path_plus_constructs_path();
-	if(result != 0){
-		errx(result,"FAILED -- constructed path was incorrect\n");
-	} else {
-		//Alert of Pass
-		printf("GPIO_path_plus() returns correct path -- PASSED\n");
-	}
+
 
 }
 
