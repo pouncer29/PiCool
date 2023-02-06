@@ -56,6 +56,29 @@ int gpio_path_plus_constructs_path(){
 	return 0;
 }
 
+int gpio_path_plus_returns_ROOT_GPIO_PATH_when_NULL_or_empty(){
+
+	//Set expectations
+	char* expected = GPIO_ROOT;
+
+	//Get the path
+	char* result_NULL = GPIO_path_plus(NULL);
+	char* result_empty = GPIO_path_plus("");
+
+	//Check results
+	if(strcmp(expected,result_NULL) != 0){
+		printf("GPIO_path_plus() expected \"%s\", got \"%s\"\n",
+			expected,result_NULL);
+		return 1;
+	} else if (strcmp(expected,result_empty) != 0){
+		printf("GPIO_path_plus() expected \"%s\", got \"%s\"\n",
+			expected,result_empty);
+		return 2;
+	}
+
+	return 0;
+}
+
 
 /*
  write pin# to /sys/class/gpio/export (to initialize)
@@ -77,16 +100,29 @@ void TEST_gpio_init(){
 	//Path Constructor constructs paths
 	result = gpio_path_plus_constructs_path();
 	if(result != 0){
-		errx(result,"FAILED -- constructed path was incorrect\n");
+		errx(result,"FAILED -- GPIO_path_plus() did not append proper path\n");
 	} else {
 		//Alert of Pass
 		printf("GPIO_path_plus() returns correct path -- PASSED\n");
 	}
 
+
+	result = gpio_path_plus_returns_ROOT_GPIO_PATH_when_NULL_or_empty();
+	if(result == 1){
+		errx(result,"FAILED -- GPIO_path_plus(): Failed when passed NULL\n");
+	} else if(result == 2){
+		errx(result,"FAILED -- GPIO_path_plus(): Failed when passed empty string\n");
+	} else if(result == 0){
+		//Alert of Pass
+		printf("GPIO_path_plus() returns GPIO_ROOT when provided NULL or Empty -- PASSED\n");
+	} else {
+		errx(result,"FAILED -- GPIO_path_plus(): Failed with unknown error %d\n",result);
+	}
+
 	//GPIO path is fetched
 	result = get_gpio_path_gets_correct_path();
 	if(result != 0){
-		errx(result,"FAILED -- Fetched path was incorrect\n");
+		errx(result,"FAILED -- get_GPIO_path(): Fetched path was incorrect\n");
 	} else {
 		//Alert of Pass
 		printf("get_GPIO_path() returns correct path -- PASSED\n");
