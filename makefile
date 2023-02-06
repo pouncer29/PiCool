@@ -1,6 +1,7 @@
 export CFLAGS := -g -Wall -Wextra -DTEST
-export SRC := $(shell pwd)
-export ROOT_DIR := $(SRC)/..
+export ROOT_DIR := $(shell pwd)
+export SRC := $(ROOT_DIR)/src
+export LIB := $(ROOT_DIR)/lib
 export CONFIG_DIR := $(SRC)/CONF_LOADER
 export FAN_CTRL_DIR:= $(SRC)/FAN_CTRL
 

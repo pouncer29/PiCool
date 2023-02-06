@@ -34,13 +34,17 @@ d) get_GPIO_path();
 #ifndef FAN_CONFIG
 #define FAN_CONFIG
 
-#include <conf_loader.h>
-
 #ifdef TEST //If we are TESTING, don't use the real deal.
 	#define GPIO_ROOT "../../tests/gpio"
 #else
 	#define GPIO_ROOT "/sys/class/gpio"
 #endif
+
+#include <stdlib.h>
+#include <stdio.h>
+#include <stdint.h>
+#include <string.h>
+#include <conf_loader.h>
 
 
 

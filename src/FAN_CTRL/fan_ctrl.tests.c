@@ -1,9 +1,9 @@
+#include <fan_ctrl.h>
+#include <conf_loader.h>
 #include <assert.h>
 #include <err.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <fan_ctrl.h>
-#include <conf_loader.h>
 #include <string.h>
 
 
