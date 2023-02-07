@@ -10,11 +10,16 @@
 
 int get_gpio_path_gets_correct_path(){
 
+
+	//Setup the config
+	char* config_path = "../../tests/test_confs/default.picool.conf";
+	CONFIG* config = get_config(config_path);	
+
 	//set_expectations
-	char* expected = (char*) malloc(strlen("/gpio28") + \
+	char* expected = (char*) malloc(strlen("/gpio23") + \
 		strlen(GPIO_ROOT));
 	strcat(expected,GPIO_ROOT); //provide the ../../tests/test_gpio
-	strcat(expected,"/gpio28"); //provide the full path
+	strcat(expected,"/gpio23"); //provide the full path
 
 	char* result = get_GPIO_path();
 
