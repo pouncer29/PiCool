@@ -14,10 +14,11 @@ int get_gpio_path_gets_correct_path(){
 	//Setup the config
 	char* config_path = "../../tests/test_confs/default.picool.conf";
 	CONFIG* config = get_config(config_path);	
+	size_t expected_size = strlen("/gpio23") + strlen(GPIO_ROOT) + 1;
 
 	//set_expectations
-	char* expected = (char*) malloc(strlen("/gpio23") + \
-		strlen(GPIO_ROOT));
+	char* expected = (char*) malloc(expected_size);
+	printf("GPIO PATH UNINIT IS: %s\n",expected);
 	strcat(expected,GPIO_ROOT); //provide the ../../tests/test_gpio
 	strcat(expected,"/gpio23"); //provide the full path
 

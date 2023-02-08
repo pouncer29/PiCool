@@ -44,11 +44,11 @@ char* GPIO_path_plus(char* path){
 		return GPIO_ROOT;	
 	} else {
 		//otherwise, measure the lenght of the path in chars
-		uint8_t path_len = strlen(GPIO_ROOT) + strlen(path) +1; //for \0
+		uint8_t path_len = strlen(GPIO_ROOT) + strlen(path);
 
 		
 		//allocate path_len char*
-		char* full_path = (char*) malloc(path_len);
+		char* full_path = (char*) malloc(path_len +1);
 
 		//Append GPIO_ROOT and PATH
 		strcat(full_path,GPIO_ROOT);
