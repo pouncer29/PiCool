@@ -49,6 +49,7 @@ char* GPIO_path_plus(char* path){
 		
 		//allocate path_len char*
 		char* full_path = (char*) malloc(path_len +1);
+		*full_path = '\0';
 
 		//Append GPIO_ROOT and PATH
 		strcat(full_path,GPIO_ROOT);
