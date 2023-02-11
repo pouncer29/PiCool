@@ -6,22 +6,26 @@ CONFIG* fan_config = NULL;
  * Synopsis: Assigns the value within confline to the appropriate my_config field
  * precondition: conf_line is a line of input 
  * postcondition: my_config has been assigned a new value
- * return: 0 on success 1 on failed scan, 2 on bad keyword len, 
+ * return: 0 on success ,1 on bad keyword len.
  */
 int assign_values(char* conf_line, CONFIG* my_config){
 
 	//Check to see if this line contains more than one character
 	if(strlen(conf_line) > 1){
 			
-		char keyword[MAX_KEYWORD_LEN]; //Buffer for the keyword only
-		char* value; //Buffer for the keyword only
+		//conf_line i.e. FAN_PIN ##
 
-		//Pull out keyword
-		int scan_ret = sscanf(conf_line,"%s",keyword);
-		if(scan_ret > 1){
-			errx(1,"FAILED TO SCAN VALUE\n");
-			return 1;
-		}
+		//Grab the index of the seperator
+		char* seperator = index(conf_line, ' ');
+
+		//The Char after the seperator begins the value
+		char* value = seperator + 1;
+
+		//Then, actually split the strings with a terminating char.
+		*seperator = '\0';
+
+		//Which means conf_line is now only the keyword
+		char* keyword = conf_line;
 
 		//check keyword len
 		if(strlen(keyword) >= MAX_KEYWORD_LEN){
@@ -29,11 +33,9 @@ int assign_values(char* conf_line, CONFIG* my_config){
 				"INVALID CONF FILE: MAX KEYWORD LEN EXCEEDED:\n"
 				,keyword)
 			);
-			return 2;
+			return 1;
 		}	
 
-		//Pull out value (everything after the space)
-		value = strchr(conf_line,' ') + 1; //+1 advances past the space
 
 
 		//Read in the appropriate value  (CANDIATE FOR NEW FN())
