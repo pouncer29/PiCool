@@ -44,6 +44,7 @@ int gpio_path_plus_constructs_path(){
 	char* test_path= "ADDITION";
 	char* expected = NULL;
 	expected = (char*) malloc(strlen(test_path) + strlen(GPIO_ROOT) + 1);
+	*expected = '\0';
 
 	//Construct expectations
 	strcat(expected,GPIO_ROOT);
