@@ -35,7 +35,7 @@ d) get_GPIO_path();
 #define FAN_CONFIG
 
 #ifdef TEST //If we are TESTING, don't use the real deal.
-	#define GPIO_ROOT "../../tests/gpio"
+	#define GPIO_ROOT "./gpio"
 #else
 	#define GPIO_ROOT "/sys/class/gpio"
 #endif

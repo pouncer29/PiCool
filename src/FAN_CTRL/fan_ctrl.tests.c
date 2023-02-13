@@ -94,15 +94,57 @@ int gpio_path_plus_returns_ROOT_GPIO_PATH_when_NULL_or_empty(){
  write pin# to /sys/class/gpio/export (to initialize)
  write 'out' to /sys/class/gpio/gpio<PIN#>/direction (to set output)
 */
-int init_gpio_initializes_proper_files(){
-	return 1;
+int init_gpio_initializes_file_properly(){
+	uint8_t initialize_result = initialize_GPIO();
+
+	// If we report error, then it failed... duh.
+	if(initialize_result != 0){
+		printf("initialize_GPIO() returned error: %hhi \n", 
+			initialize_result);
+		return initialize_result;
+	}
+
+	//First we check if the export stage was hit
+	char* export_file_path = GPIO_path_plus("/export");
+	FILE* export_file = fopen(export_file_path,"r");
+	if(NULL == export_file){
+			printf("failed to open \"export\" file: %s\n",
+			export_file_path);
+		return -1;
+	} 
+
+	//Then check if the 'out' stage was hit
+	char* pin_mode_path = GPIO_path_plus("/gpio23/direction");
+	FILE* pin_mode_file = fopen(pin_mode_path,"r");
+	if(NULL == pin_mode_file){
+		printf("failed to open \"mode\" file: %s\n",
+			pin_mode_path);
+		return -1;
+	}
+
+	//Then check if they contain the proper values
+	char buffer[4];
+
+	//Read the export file
+	if(fgets(buffer,4,export_file) != NULL){
+		if(strcmp("out",buffer) != 0){
+			printf("export file contained %s, expected %s",
+				buffer,"23");
+			return -2;
+		}
+	}
+
+	//read the pin file
+	if(fgets(buffer,4,pin_mode_file) != NULL){
+		if(strcmp("out",buffer) != 0){
+			printf("Out file contained %s, expected %s",
+				buffer,"out");
+			return -2;
+		}
+	}
+
+	return 0;
 }
-
-int init_gpio_writes_to_appropriate_file(){
-	return 1;
-}
-
-
 
 void TEST_gpio_init(){
 	int result = 1;
@@ -137,6 +179,16 @@ void TEST_gpio_init(){
 		//Alert of Pass
 		printf("get_GPIO_path() returns correct path -- PASSED\n");
 	}
+
+	//GPIO export file is initialized properly
+	result = init_gpio_initializes_file_properly();
+	if(result != 0){
+		errx(result,"FAILED -- initialize_GPIO(): Failed to initalize GPIO\n");
+	} else {
+		//Alert of Pass
+		printf("initialize_GPIO() initialized the proper file to proper values -- PASSED\n");
+	}
+
 
 
 
