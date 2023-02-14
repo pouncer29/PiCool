@@ -126,21 +126,26 @@ int init_gpio_initializes_file_properly(){
 	char buffer[4];
 
 	//Read the export file
-	if(fgets(buffer,4,export_file) != NULL){
-		if(strcmp("out",buffer) != 0){
-			printf("export file contained %s, expected %s",
+	int did_scan = fscanf(export_file,"%s",buffer);
+	if(did_scan == 1){
+		if(strcmp("23",buffer) != 0){
+			printf("export file contained %s, expected %s\n",
 				buffer,"23");
 			return -2;
 		}
+	} else {
+		return -3;
 	}
 
 	//read the pin file
-	if(fgets(buffer,4,pin_mode_file) != NULL){
+	if(fscanf(pin_mode_file,"%s",buffer) == 1){
 		if(strcmp("out",buffer) != 0){
-			printf("Out file contained %s, expected %s",
+			printf("Out file contained %s, expected %s\n",
 				buffer,"out");
 			return -2;
 		}
+	} else {
+		return -3;
 	}
 
 	return 0;

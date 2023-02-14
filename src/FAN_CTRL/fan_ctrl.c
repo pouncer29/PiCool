@@ -30,6 +30,8 @@ uint8_t initialize_GPIO(){
 	//otherwise, we are good
 	fprintf(export_file,"%s",pin_num_str);
 
+	fclose(export_file);
+
 	//TODO: WARNING - DEPENDING ON HOW FAST THIS WORKS, gpioXX may not exist.
 	
 	//Step TWO: write "out" to GPIO_ROOT/gpio<PIN>/direction
@@ -42,11 +44,13 @@ uint8_t initialize_GPIO(){
 	//Open our pin file
 	FILE* fan_pin_file = fopen(GPIO_path_plus(pin_path),"w");
 	if(NULL == fan_pin_file){	
-		return 1;
+		return 2;
 	}
 
 	//otherwise, we are good to set pin XX to output mode
 	fprintf(fan_pin_file,"out");
+
+	fclose(fan_pin_file);
 
 	return 0;
 }
