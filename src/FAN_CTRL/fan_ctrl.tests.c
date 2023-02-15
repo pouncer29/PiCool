@@ -196,7 +196,39 @@ void TEST_gpio_init(){
 }
 
 int activate_fan_writes_proper_value_to_file(){
+	//Call Activate
 	int success = activate_fan();
+
+	//Check Return Value
+	if(success != 0 ){
+		printf("activate_fan() returned error code: %d\n",success);
+	}
+		
+	//Check file @ GPIO_ROOT/gpio<PIN#>/value
+	char* pin_value_path = GPIO_path_plus("/gpio23/value");
+	FILE* pin_value_file = fopen(pin_value_path,"r");
+
+	//Check file exists
+	if(NULL == pin_value_file){
+		printf("file at \"%s\" failed to open\n",pin_value_path);
+		return -1;
+	}
+	int* pin_state = 0; //Only holds a 1 or a 0 for activate we hope for 1
+	//Open if so
+	if(fscanf(pin_value_file,"%d",pin_state) == 1){
+		if(*pin_state != 1){
+			printf("Value file contained %d, expected 1\n",
+				*pin_state);
+			return -2;
+		}
+	} else {
+		printf("Failed to scan in values from %s.\n",pin_value_path);
+		return -3;
+	}
+
+	//Free alocated resources
+	free(pin_value_path);
+	
 	return success;
 }
 
@@ -236,19 +268,3 @@ int main(){
 	return 0;
 }
 
-
-/*
-c) initialize_GPIO()
-	info: uses 2.1 to get fan pin and initializes the appropriate sys files
-		to enable GPIO on that pin
-	synopsis:
-		write pin# to /sys/class/gpio/export (to initialize)
-		write 'out' to /sys/class/gpio/gpio<PIN#>/direction (to set output)
-	params: none
-	return: 1 on failure, 0 on success
-d) get_GPIO_path();
-	info: uses alg C if no path set, otherwise returns the path needed to 
-		activate/deactivate GPIO
-	params: none
-	return: char* the path to the GPIO file
-*/
