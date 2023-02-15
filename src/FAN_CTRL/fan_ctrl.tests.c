@@ -193,16 +193,43 @@ void TEST_gpio_init(){
 		//Alert of Pass
 		printf("initialize_GPIO() initialized the proper file to proper values -- PASSED\n");
 	}
+}
 
+int activate_fan_writes_proper_value_to_file(){
+	int success = activate_fan();
+	return success;
+}
 
+int activate_fan_writes_proper_value_to_file(){
+	int success = deactivate_fan();
+	return success;
+}
 
+void TEST_gpio_ctrl(){
+	int result = 1;
 
+	//Path Constructor constructs paths
+	result = activate_fan_writes_proper_value_to_file();
+	if(result != 0){
+		errx(result,"FAILED -- activate_fan() did not write to appropriate file\n");
+	} else {
+		//Alert of Pass
+		printf("activate_fan() writes proper value to proper file -- PASSED\n");
+	}
+	
+	result = deactivate_fan_writes_proper_value_to_file();
+	if(result != 0){
+		errx(result,"FAILED -- deactivate_fan() did not write correctly\n");
+	} else {
+		//Alert of Pass
+		printf("deactivate_fan() writes proper value to proper file -- PASSED\n");
+	}
 
 }
 
 int main(){
 	printf("TESTING FAN_CTRL\n");
-	
+	TEST_gpio_ctrl();
 	TEST_gpio_init();
 
 

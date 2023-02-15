@@ -12,8 +12,6 @@ initialize_GPIO()
 */
 uint8_t initialize_GPIO(){
 
-	//TODO: Check to see if everything has been configured first maybe....
-	
 	//Step ZERO: load the config file
 	get_config(NULL);
 
