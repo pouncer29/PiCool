@@ -200,7 +200,7 @@ int activate_fan_writes_proper_value_to_file(){
 	return success;
 }
 
-int activate_fan_writes_proper_value_to_file(){
+int deactivate_fan_writes_proper_value_to_file(){
 	int success = deactivate_fan();
 	return success;
 }
@@ -211,7 +211,7 @@ void TEST_gpio_ctrl(){
 	//Path Constructor constructs paths
 	result = activate_fan_writes_proper_value_to_file();
 	if(result != 0){
-		errx(result,"FAILED -- activate_fan() did not write to appropriate file\n");
+		errx(result,"FAILED -- activate_fan() did not write correctly\n");
 	} else {
 		//Alert of Pass
 		printf("activate_fan() writes proper value to proper file -- PASSED\n");
