@@ -297,6 +297,7 @@ int get_config_ERR_on_bad_input(){
 	//Bad config
 	CONFIG* my_config = get_config("./test_confs/bad.picool.conf");
 	assert(my_config != NULL);
+	free(my_config);
 	return 0;
 }
 

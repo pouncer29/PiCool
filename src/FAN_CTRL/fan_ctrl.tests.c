@@ -28,6 +28,9 @@ int get_gpio_path_gets_correct_path(){
 			expected,result);
 		return 1;
 	}
+	
+	//Free allocated resources
+	free(result);
 
 	return 0;
 }
@@ -37,8 +40,7 @@ int gpio_path_plus_constructs_path(){
 
 	//Set expectations
 	char* test_path= "ADDITION";
-	char* expected = NULL;
-	expected = (char*) malloc(strlen(test_path) + strlen(GPIO_ROOT) + 1);
+	char* expected = (char*) malloc(strlen(test_path) + strlen(GPIO_ROOT) + 1);
 	*expected = '\0';
 
 	//Construct expectations
@@ -55,8 +57,9 @@ int gpio_path_plus_constructs_path(){
 		return 1;
 	}
 
-	//Freee the var
+	//Free allocated strings
 	free(expected);
+	free(result);
 
 	return 0;
 }
@@ -80,6 +83,9 @@ int gpio_path_plus_returns_ROOT_GPIO_PATH_when_NULL_or_empty(){
 			expected,result_empty);
 		return 2;
 	}
+
+	//We do not free in the null case because NULL/empty case returns the 
+	//GPIO_ROOT compiler constant. We didn't allocate that, so don't free it.
 
 	return 0;
 }
@@ -142,6 +148,10 @@ int init_gpio_initializes_file_properly(){
 	} else {
 		return -3;
 	}
+	
+	//Free allocated resources
+	free(export_file_path);
+	free(pin_mode_path);
 
 	return 0;
 }

@@ -91,7 +91,7 @@ uint8_t deactivate_fan(){
 }
 
 /*
-get_GPIO_path();
+get_GPIO_path(): DEPRECATED
 	info: uses alg C if no path set, otherwise returns the path needed to 
 		activate/deactivate GPIO
 	params: none
