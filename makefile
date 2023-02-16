@@ -4,10 +4,11 @@ export SRC := $(ROOT_DIR)/src
 export LIB := $(ROOT_DIR)/lib
 export CONFIG_DIR := $(SRC)/CONF_LOADER
 export FAN_CTRL_DIR:= $(SRC)/FAN_CTRL
+export FAN_AUTOMATION_DIR:= $(SRC)/AUTOMATION
 
 all: start conf_loader fan_ctrl
 
-.PHONEY: all start conf_loader fan_ctrl
+.PHONEY: all start conf_loader fan_ctrl fan_auto
 
 start:
 	@echo "STATING"
@@ -19,3 +20,7 @@ conf_loader:
 fan_ctrl:
 	@echo "********************* MAKING FAN_CTRL **************************"
 	$(MAKE) -C $(FAN_CTRL_DIR)
+
+fan_auto:
+	@echo "****************** MAKING FAN_AUTOMATION ***********************"
+	$(MAKE) -C $(FAN_AUTOMATION_DIR)

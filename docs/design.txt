@@ -14,7 +14,7 @@
 	D - Fan-Automation: Will monitor temperature and activate/deactivate Fan
 		based on loaded config
 
-	E - Read-Temperature: Reads the temperature of the board, returns as int(?)
+	E - Read-Temperature: Reads the temperature of the board, returns as float
 
 1.1 - Diagrams
 --------------
@@ -62,13 +62,7 @@ c) get_active_temp()
 		params: none
 		return: Activation threshold in degrees celcius
 
-d) get_cur_temp() TODO: THIS ONE
-	info: Uses the native temperature reading functions of the system to grab 
-          the temperature and returns it as an integer.
-	params: none
-	return: current temperature as an integer
-
-e) load_config(file)
+d) load_config(file)
 	info: Loads the configuration file into a structure
 	params: file - the path to the config file
 	return: a new config_file to operate on.
@@ -92,16 +86,24 @@ b) deactivate_fan()
 	params: none
 	return: 1 on failure, 0 on success
 
+
 2.3 Fan_Automation
 -------------------
 Task: Automates the fan process by monitoring temperature and activating/
 	  deactivating the fan.
 Methods:
-	run()
+	a) run()
 	 info: Uses system 2.2 and 2.1 to monitor and activate the fan appropriately
 	 params: none
 	 return: never
+	
+	b) get_cur_temp() 
+	info: Uses the native temperature reading functions of the system to grab 
+          the temperature and returns it as an integer.
+	temperature can be found at /sys/class/thermal/thermal_zone0/temp and divide
+		this by 1000 to get degrees celcius
+	params: none
+	return: current temperature as an integer
 
-		
 	
 
