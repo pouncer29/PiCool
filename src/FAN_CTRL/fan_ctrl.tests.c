@@ -10,13 +10,8 @@
 
 int get_gpio_path_gets_correct_path(){
 
-
-	//Setup the config
-	char* config_path = "../tests/test_confs/default.picool.conf";
-	CONFIG* config = get_config(config_path);	
-	int expected_size = strlen("/gpio23/value") + strlen(GPIO_ROOT);
-
 	//set_expectations
+	int expected_size = strlen("/gpio23/value") + strlen(GPIO_ROOT);
 	
 	//initialize and declare expected
 	char expected[expected_size];
@@ -196,6 +191,7 @@ void TEST_gpio_init(){
 }
 
 int activate_fan_writes_proper_value_to_file(){
+	
 	//Call Activate
 	int success = activate_fan();
 
@@ -213,12 +209,12 @@ int activate_fan_writes_proper_value_to_file(){
 		printf("file at \"%s\" failed to open\n",pin_value_path);
 		return -1;
 	}
-	int* pin_state = 0; //Only holds a 1 or a 0 for activate we hope for 1
+	int pin_state = 0; //Only holds a 1 or a 0 for activate we hope for 1
 	//Open if so
-	if(fscanf(pin_value_file,"%d",pin_state) == 1){
-		if(*pin_state != 1){
+	if(fscanf(pin_value_file,"%d",&pin_state) == 1){
+		if(pin_state != 1){
 			printf("Value file contained %d, expected 1\n",
-				*pin_state);
+				pin_state);
 			return -2;
 		}
 	} else {
@@ -228,12 +224,46 @@ int activate_fan_writes_proper_value_to_file(){
 
 	//Free alocated resources
 	free(pin_value_path);
-	
+
+		
 	return success;
 }
 
 int deactivate_fan_writes_proper_value_to_file(){
+	
+	//Call Activate
 	int success = deactivate_fan();
+
+	//Check Return Value
+	if(success != 0 ){
+		printf("deactivate_fan() returned error code: %d\n",success);
+	}
+		
+	//Check file @ GPIO_ROOT/gpio<PIN#>/value
+	char* pin_value_path = GPIO_path_plus("/gpio23/value");
+	FILE* pin_value_file = fopen(pin_value_path,"r");
+
+	//Check file exists
+	if(NULL == pin_value_file){
+		printf("file at \"%s\" failed to open\n",pin_value_path);
+		return -1;
+	}
+	int pin_state = 0; //Only holds a 1 or a 0 for activate we hope for 1
+	//Open if so
+	if(fscanf(pin_value_file,"%d",&pin_state) == 1){
+		if(pin_state != 0){
+			printf("Value file contained %d, expected 1\n",
+				pin_state);
+			return -2;
+		}
+	} else {
+		printf("Failed to scan in values from %s.\n",pin_value_path);
+		return -3;
+	}
+
+	//Free alocated resources
+	free(pin_value_path);
+		
 	return success;
 }
 
@@ -261,10 +291,16 @@ void TEST_gpio_ctrl(){
 
 int main(){
 	printf("TESTING FAN_CTRL\n");
+	//Setup config for everybody
+	char* config_path = "../tests/test_confs/default.picool.conf";
+	CONFIG* config = get_config(config_path);	
+	if(NULL == config)
+		return 1;
+
 	TEST_gpio_ctrl();
 	TEST_gpio_init();
 
-
+	unload_config();
 	return 0;
 }
 

@@ -1,5 +1,32 @@
 #include <fan_ctrl.h>
 
+uint8_t write_to_gpio_file(int state){
+
+	//Get the Config
+	get_config(NULL);
+	
+	//Construct the base_file path	
+	char pin_num_str[strlen("/gpioxx/value")]; //Create a buffer for the string
+	uint8_t fan_pin = get_fan_pin();
+	sprintf(pin_num_str,"/gpio%hhi/value",fan_pin);
+	
+	//Open the file
+	char* gpio_file_path = GPIO_path_plus(pin_num_str);
+	FILE* gpio_file = fopen(gpio_file_path,"w");
+	if(NULL == gpio_file){
+		return 1;
+	}
+
+	//Write to the file
+	fprintf(gpio_file,"%d",state);
+	
+	//free resources
+	fclose(gpio_file);
+	free(gpio_file_path);
+	
+	return 0;
+}
+
 /*
 initialize_GPIO()
 	info: uses 2.1 to get fan pin and initializes the appropriate sys files
@@ -40,7 +67,8 @@ uint8_t initialize_GPIO(){
 	sprintf(pin_path,"/gpio%s/direction",pin_num_str);
 	
 	//Open our pin file
-	FILE* fan_pin_file = fopen(GPIO_path_plus(pin_path),"w");
+	char* pin_direction_path = GPIO_path_plus(pin_path);
+	FILE* fan_pin_file = fopen(pin_direction_path,"w");
 	if(NULL == fan_pin_file){	
 		return 2;
 	}
@@ -48,16 +76,18 @@ uint8_t initialize_GPIO(){
 	//otherwise, we are good to set pin XX to output mode
 	fprintf(fan_pin_file,"out");
 
+	//And free any resources
 	fclose(fan_pin_file);
+	free(pin_direction_path);
 
 	return 0;
 }
 
 uint8_t activate_fan(){
-	return 255;
+	return write_to_gpio_file(1);
 }
 uint8_t deactivate_fan(){
-	return 255;
+	return write_to_gpio_file(0);
 }
 
 /*
