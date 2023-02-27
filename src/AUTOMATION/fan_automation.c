@@ -1,5 +1,8 @@
 #include <fan_automation.h>
-// TEMPERATURE_FILE "./test_temperature/temp"
+
+/*
+ * Synopsis: Returns the value inside of the TEMPERATURE_FILE in deg celcius
+ */
 float get_cur_temp(){
 
 	//Open the file	
@@ -20,7 +23,9 @@ float get_cur_temp(){
 	return cur_temp/1000; //Divide by 1000 to get deg_celcius
 }
 
-int run(){
-	return 1;
+/**
+ * Synopsis: Returns 1 if cur_temp > danger_temp, 0 otherwise
+ */
+int temp_over_thresh(float danger_temp){
+	return (danger_temp - get_cur_temp()) > 0.0f;
 }
-

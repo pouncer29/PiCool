@@ -29,11 +29,8 @@ Methods:
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <stdint.h>
-#include <string.h>
-#include <conf_loader.h>
 
-int run();
 float get_cur_temp();
+int temp_over_thresh(float danger_temp);
 
 #endif
