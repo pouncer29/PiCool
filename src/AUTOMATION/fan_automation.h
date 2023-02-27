@@ -35,6 +35,5 @@ Methods:
 
 int run();
 float get_cur_temp();
-int compare_float(float,float);
 
 #endif
