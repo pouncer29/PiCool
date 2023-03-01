@@ -137,3 +137,18 @@ char* GPIO_path_plus(char* path){
 		return full_path;
 	}
 }
+
+
+/*
+ *FOR NEXT VERSION
+ */
+void handle_manual_on(){
+	return;
+}
+
+/*
+ *FOR NEXT VERSION
+*/
+void handle_auto_on(){
+	return;
+}

@@ -105,5 +105,15 @@ Methods:
 	params: none
 	return: current temperature as an integer
 
-	
+	c) handle_manual_on()
+	info: catches SIGUSER1 and activates the fan
+		this will likely requre some global loop-control 
+		variable to be toggled.
+	params: none
+	return: none
+
+	d) handle_auto_on()
+	info: catches SIGUSER2 and sets the system back to automated monitoring
+	params: none
+	return: none
 

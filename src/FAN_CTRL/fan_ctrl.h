@@ -44,9 +44,8 @@ d) get_GPIO_path();
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
+#include <signal.h>
 #include <conf_loader.h>
-
-
 
 
 uint8_t initialize_GPIO();
@@ -54,5 +53,7 @@ uint8_t activate_fan();
 uint8_t deactivate_fan();
 char* get_GPIO_path();
 char* GPIO_path_plus(char*);
+void handle_manual_on();
+void handle_auto_on();
 
 #endif

@@ -14,7 +14,7 @@ conf_loader.a: conf_loader.o
 
 conf_loader.o: conf_loader.c conf_loader.h 
 	@echo "MAKING CONF_LOADER"
-	gcc $(CFLAGS) -c conf_loader.c -I.
+	gcc $(CFLAGS) -c conf_loader.c -I. 
 
 
 clean:
