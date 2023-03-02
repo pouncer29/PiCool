@@ -10,7 +10,7 @@ float get_cur_temp(){
 	
 	if(temp_file == NULL){
 		fprintf(stderr,"TEMP FILE \"%s\" NOT FOUND.\n",TEMPERATURE_FILE);
-		return 1;
+		return -1.0f;
 	}
 
 	float cur_temp = 0.0f;

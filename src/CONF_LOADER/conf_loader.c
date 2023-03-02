@@ -174,7 +174,3 @@ uint8_t get_poll_time(){
 float get_activation_temp(){
 	return fan_config->active_thresh;
 }
-
-float get_cur_temp(){
-	return -1.0f;
-}

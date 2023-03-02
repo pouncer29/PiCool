@@ -4,15 +4,19 @@ export SRC := $(ROOT_DIR)/src
 export LIB := $(ROOT_DIR)/lib
 export BIN := $(ROOT_DIR)/bin
 export CONFIG_DIR := $(SRC)/CONF_LOADER
-export FAN_CTRL_DIR:= $(SRC)/FAN_CTRL
+export FAN_CTRL_DIR := $(SRC)/FAN_CTRL
 export FAN_AUTOMATION_DIR:= $(SRC)/AUTOMATION
+export PICOOL := $(SRC)/PICOOL
 
-all: start conf_loader fan_ctrl
+all: conf_loader fan_ctrl libpicool tests picool
+
+default: picool
 
 .PHONEY: all start conf_loader fan_ctrl fan_auto
 
-start:
-	@echo "STATING"
+picool:libpicool
+	@echo "********************* MAKING PICOOL ****************************"
+	$(MAKE) -C $(PICOOL)
 
 libpicool: conf_loader fan_ctrl fan_auto
 	@echo "MAKING libpicool"
