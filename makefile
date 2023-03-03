@@ -1,4 +1,4 @@
-export CFLAGS := -g -Wall -Wextra -DTEST
+export CFLAGS := -g -Wall -Wextra #-DTEST
 export ROOT_DIR := $(shell pwd)
 export SRC := $(ROOT_DIR)/src
 export LIB := $(ROOT_DIR)/lib

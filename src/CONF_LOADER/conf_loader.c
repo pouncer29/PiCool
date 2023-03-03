@@ -8,8 +8,7 @@ CONFIG* fan_config = NULL;
  * postcondition: my_config has been assigned a new value
  * return: 0 on success ,1 on bad keyword len.
  */
-int assign_values(char* conf_line, CONFIG* my_config){
-
+int assign_values(char* conf_line){
 	//Check to see if this line contains more than one character
 	if(strlen(conf_line) > 1){
 			
@@ -40,11 +39,11 @@ int assign_values(char* conf_line, CONFIG* my_config){
 
 		//Read in the appropriate value  (CANDIATE FOR NEW FN())
 		if(strcmp(keyword,"FAN_PIN") == 0){
-			sscanf(value,"%hhi",&(my_config->fan_pin));
+			sscanf(value,"%hhu",&fan_config->fan_pin);
 		} else if (strcmp(keyword,"POLL_TIME") == 0){
-			sscanf(value,"%hhi",&(my_config->poll_time));
+			sscanf(value,"%hhu",&fan_config->poll_time);
 		} else if (strcmp(keyword,"ACTIVE_TEMP") == 0){
-			sscanf(value,"%f",&(my_config->active_thresh));
+			sscanf(value,"%f",&fan_config->active_thresh);
 		} //Else, we don't care what it is.
 	}
 	return 0;
@@ -73,17 +72,23 @@ int load_config(char* config_path){
 	if(conf_file == NULL){
 		fprintf(stderr,"CONF FILE \"%s\" NOT FOUND.\n",config_path);
 		return 1;
+	} else {
+		printf("SUCCESSFULLY LOADED CONF @ %s\n",config_path);
 	}
 
 	char conf_line[20];		//Holds a full line of input
 
 	//Loop through file, and assign values
 	while(fgets(conf_line,20,conf_file) != NULL){
-		if(assign_values(conf_line,fan_config) != 0){
+		if(assign_values(conf_line) != 0){
 			fprintf(stderr,"Error assigning conf values: %s",config_path);
 			return 2;
 		}
 	}
+	
+	printf("AFTER ASSIGNMENT: %d, %d, %f\n",
+	fan_config->fan_pin, fan_config->poll_time, 
+	fan_config->active_thresh);
 
 	//Close the file
 	fclose(conf_file);
@@ -118,9 +123,13 @@ CONFIG* get_config(char* config_path){
 	//If we were not given a config path, check to see if conf is loaded
 	//if conf is loaded, return it
 	if(config_path == NULL && fan_config != NULL){
+		printf("PROVIDING OLD CONFIG: %d, %d, %f\n",
+		fan_config->fan_pin, fan_config->poll_time, 
+		fan_config->active_thresh);
 		return fan_config;
 	} else {
 		//Otherwise load it 
+		printf("LOADING CONFIG @ %s\n",config_path);
 		int did_load = load_config(config_path);
 
 		//Check to see if return is OK or defaults assigned (NOT NULL)
