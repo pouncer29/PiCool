@@ -72,9 +72,7 @@ int load_config(char* config_path){
 	if(conf_file == NULL){
 		fprintf(stderr,"CONF FILE \"%s\" NOT FOUND.\n",config_path);
 		return 1;
-	} else {
-		printf("SUCCESSFULLY LOADED CONF @ %s\n",config_path);
-	}
+	} 
 
 	char conf_line[20];		//Holds a full line of input
 
@@ -86,10 +84,6 @@ int load_config(char* config_path){
 		}
 	}
 	
-	printf("AFTER ASSIGNMENT: %d, %d, %f\n",
-	fan_config->fan_pin, fan_config->poll_time, 
-	fan_config->active_thresh);
-
 	//Close the file
 	fclose(conf_file);
 
@@ -123,13 +117,9 @@ CONFIG* get_config(char* config_path){
 	//If we were not given a config path, check to see if conf is loaded
 	//if conf is loaded, return it
 	if(config_path == NULL && fan_config != NULL){
-		printf("PROVIDING OLD CONFIG: %d, %d, %f\n",
-		fan_config->fan_pin, fan_config->poll_time, 
-		fan_config->active_thresh);
 		return fan_config;
 	} else {
 		//Otherwise load it 
-		printf("LOADING CONFIG @ %s\n",config_path);
 		int did_load = load_config(config_path);
 
 		//Check to see if return is OK or defaults assigned (NOT NULL)
