@@ -13,7 +13,7 @@
 //Defaults
 #define DEFAULT_FAN_PIN 23
 #define DEFAULT_POLL_TIME 60
-#define DEFAULT_ACTIVE_TEMP 65.5f
+#define DEFAULT_ACTIVE_TEMP 60.0f
 #define DEFAULT_CONF_FILE_LOC "/etc/picool.conf"
 
 typedef struct{
