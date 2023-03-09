@@ -1,4 +1,4 @@
-export CFLAGS := -g -Wall -Wextra -DTEST
+export CFLAGS := -g -Wall -Wextra #-DTEST
 export ROOT_DIR := $(shell pwd)
 export SRC := $(ROOT_DIR)/src
 export LIB := $(ROOT_DIR)/lib
@@ -34,7 +34,7 @@ fan_auto:
 	@echo "****************** MAKING FAN_AUTOMATION ***********************"
 	$(MAKE) -C $(FAN_AUTOMATION_DIR)
 
-tests:
+tests: libpicool
 	@echo "****************** MAKING TESTS***********************"
 clean:
 	rm $(BIN)/*.o

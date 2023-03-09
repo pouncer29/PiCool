@@ -35,6 +35,12 @@ int main(int argc, char* argv[]){
 		return EXIT_FAILURE;
 	}
 
+	int init_gpio_success = initialize_GPIO();
+	if(init_gpio_success != 0){
+		fprintf(stderr,"ERROR: FAILED TO INIT GPIO: %d",init_gpio_success);
+		return EXIT_FAILURE;
+	}
+
 	/** FOREVER */
 	//HOld on, TODO: Free the config file on exit
 	while(1){
