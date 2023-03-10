@@ -14,6 +14,7 @@ default: picool
 
 .PHONEY: all start conf_loader fan_ctrl fan_auto
 
+picool: CFLAGS = -Wall -Wextra
 picool:libpicool
 	@echo "********************* MAKING PICOOL ****************************"
 	$(MAKE) -C $(PICOOL)
@@ -34,8 +35,13 @@ fan_auto:
 	@echo "****************** MAKING FAN_AUTOMATION ***********************"
 	$(MAKE) -C $(FAN_AUTOMATION_DIR)
 
+tests: CFLAGS = -Wall -Wextra -DTEST
 tests: libpicool
-	@echo "****************** MAKING TESTS***********************"
+	@echo "****************** MAKING TESTS ***********************"
+
+debug: CFLAGS = -g -Wall -Wextra -DTEST
+debug: libpicool
+	@echo "****************** MAKING DEBUG ***********************"
 clean:
 	rm $(BIN)/*.o
 	rm $(LIB)/*.a

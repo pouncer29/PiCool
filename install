@@ -1,0 +1,64 @@
+#! /bin/bash
+
+#Lets Go
+echo "INSTALLING PICOOL..."
+if [ "$EUID" -ne 0 ]; then
+	echo "Please run as root"
+	#exit 1
+fi
+
+# Setup directories
+mkdir lib
+mkdir bin
+
+echo "Making picool executable..."
+sudo make picool
+if [ $? -ne 0 ]; then
+	echo "FAILED TO MAKE PICOOL"
+	exit 1
+else
+	echo "picool installed to /bin/picool"
+fi
+
+#Create Config File
+echo "USING DEFAULT CONFIG: ..."
+cat ./default.picool.conf
+sudo cp ./default.picool.conf /etc/picool.conf
+if [ $? -ne 0 ]; then
+	echo "Failed to create default conf at /etc/picool.conf"
+else
+	echo "Edit config at /etc/picool.conf"
+fi
+
+
+#Check For Service
+
+echo "Creating service if not exists..."
+
+SERVICELOC=/etc/systemd/system
+if [ -f $SERVICELOC/FanService.service ]; then
+	echo "Service \"FanService.service\" already exists at $SERVICELOC" 
+else
+	#GetDir
+	SERVICEPATH="`pwd`/Service"
+
+	#Move the Template Service
+	SERVICE=$SERVICEPATH/FanService.service
+	sudo ln -s $SERVICE $SERVICELOC
+	echo "Created Service at: $SERVICE"
+	echo "Creating Service Symlink..."
+	sudo systemctl enable FanService.service
+	echo "Created service Symlink for $SERVICE attempting start..."
+fi
+
+
+sudo systemctl restart FanService.service
+if [ $? -ne 0 ];then
+	echo "Failed to restart service FanService.service"
+	exit 1
+fi
+
+echo "Done."
+exit 0
+
+
