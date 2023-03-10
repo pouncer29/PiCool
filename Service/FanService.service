@@ -1,0 +1,13 @@
+[Unit]
+Description=Fan Controlling Script
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=10
+User=root
+ExecStart=/bin/picool
+
+[Install]
+WantedBy=multi-user.target
+

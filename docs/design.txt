@@ -1,0 +1,119 @@
+############ PI COOL ###################
+
+1 - System Descriptions
+-------------
+	A - Controller: The controller is in charge of running the sub scripts
+		that is, toggling the fan (when running manually) and stopping/stopping 
+		the automatic execution of the script.
+
+	B - Config_Loader: reads the `picool.conf` file and returns the pin#, 
+		danger-temp, and Poll-time
+
+	C - Fan-Control: Activates / deactivates the desired pin.
+
+	D - Fan-Automation: Will monitor temperature and activate/deactivate Fan
+		based on loaded config
+
+	E - Read-Temperature: Reads the temperature of the board, returns as float
+
+1.1 - Diagrams
+--------------
+
+1.1.1: Manual Activate
+    A --- "Activate" ---> B --Give Config--> C ----> Activates Fan on Pin
+
+1.1.2: Manual Deactivate
+    A --- "Deactivate" ---> B --- Give Config--> C ---> deactivates Fan on Pin
+	
+1.1.3: Automate 
+    A --- "Automate"  --> B --> Alter Config File --> Start Service D
+
+1.1.4: Check Temperature
+	E --> <Landscapesysinfo or like fn()) --> Temperature in degrees Celcius
+
+
+
+2 - System Designs
+------------------
+
+2.1 Config_Loader
+------------------
+Task: Read the picool.conf file to pull the values:
+```
+FAN_PIN=(PIN #)
+POLL_TIME=(Poll time in seconds)
+DANGER_TEMP=(Activation threshold in degrees celcius)
+```
+Methods:
+a) get_fan_pin()
+		info: Gets the int value of the fan pin from the config file
+		params: none
+		return: Fan Pin number (uint8)
+
+b) get_poll_time()
+		info: Gets the int value of the temperature poll cycling time from the 
+			  config file
+		params: none
+		return: Temperature Poll Time in seconds (uint8)
+
+c) get_active_temp()
+		info: Gets the integer value of the temperature to activate the fan 
+		      Automatically from the config script
+		params: none
+		return: Activation threshold in degrees celcius
+
+d) load_config(file)
+	info: Loads the configuration file into a structure
+	params: file - the path to the config file
+	return: a new config_file to operate on.
+
+
+2.2 Fan_Control
+----------------
+Task: Activates or deactivates the fan based on calling name.
+NOTE: To activate/deactivate, I'm not sure if we need to initialize the folder
+or not.
+
+Methods:
+a) activate_fan()
+	info: Uses 2.1a to get the fan pin # and writes to the appropriate 
+	      file the value '1'
+	params: none
+	return: 1 on failure, 0 on success
+b) deactivate_fan()
+	info: Uses 2.1a to get the fan pin # and writes to the appropriate file 
+		  the value '0'
+	params: none
+	return: 1 on failure, 0 on success
+
+
+2.3 Fan_Automation
+-------------------
+Task: Automates the fan process by monitoring temperature and activating/
+	  deactivating the fan.
+Methods:
+	a) run()
+	 info: Uses system 2.2 and 2.1 to monitor and activate the fan appropriately
+	 params: none
+	 return: never
+	
+	b) get_cur_temp() 
+	info: Uses the native temperature reading functions of the system to grab 
+          the temperature and returns it as an integer.
+	temperature can be found at /sys/class/thermal/thermal_zone0/temp and divide
+		this by 1000 to get degrees celcius
+	params: none
+	return: current temperature as an integer
+
+	c) handle_manual_on()
+	info: catches SIGUSER1 and activates the fan
+		this will likely requre some global loop-control 
+		variable to be toggled.
+	params: none
+	return: none
+
+	d) handle_auto_on()
+	info: catches SIGUSER2 and sets the system back to automated monitoring
+	params: none
+	return: none
+
